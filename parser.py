@@ -46,7 +46,7 @@ import ply.yacc as yacc
 
 # p_ip : SEPARADOR IP FLECHA DIRECCION_IP
 
-# p_port: SEPARADOR PORT FLECHA_DIRECTORIO NUMERO_PUERTO
+# p_port: SEPARADOR PORT FLECHA_ NUMERO_PUERTO
 
 #################################################################################################################################################################
 
@@ -82,11 +82,9 @@ tokens = (
     'NUMERO_PUERTO',
     'OPEN',   
     'DIRECTORIO_CON_ARCHIVO',
-    'DIRECTORIO_CON_ARCHIVO_COMILLAS',
     'NOMBRE_ARCHIVO',
     'NOMBRE_ARCHIVO_COMILLAS',
     'SOLO_DIRECTORIO',
-    'SOLO_DIRECTORIO_COMILLAS',
     'FLECHA',
     'SEPARADOR',   
     'CADENA',
@@ -117,14 +115,13 @@ t_OPEN = r'(O|o)(P|p)(E|e)(N|n)'
 t_DIRECCION_IP = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 t_NUMERO_PUERTO = r'\b(?:[0-9]{1,4})\b'
 
-t_DIRECTORIO_CON_ARCHIVO = r'[\/]([a-zA-Z0-9_-]+[\/])*[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+'
-t_DIRECTORIO_CON_ARCHIVO_COMILLAS = r'\"[\/]([a-zA-Z0-9_ -]+[\/])*[a-zA-Z0-9_ -]+\.[a-zA-Z0-9_-]+\"'
+t_DIRECTORIO_CON_ARCHIVO = r'[\/](([a-zA-Z0-9_-]+|\"[a-zA-Z0-9_ -]+\")[\/])*(([a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\.[a-zA-Z0-9_-]+\"))'
 
 t_NOMBRE_ARCHIVO = r'[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+'
 t_NOMBRE_ARCHIVO_COMILLAS = r'\"[a-zA-Z0-9 _-]+\.[a-zA-Z0-9_-]+\"'
 
-t_SOLO_DIRECTORIO = r'[\/]([a-zA-Z0-9_-]+[\/])*'
-t_SOLO_DIRECTORIO_COMILLAS = r'\"[\/]([a-zA-Z0-9 _-]+[\/])*\"'
+t_SOLO_DIRECTORIO = r'[\/]((([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))[\/])*'
+
 
 t_FLECHA = r'(-|–)>'
 t_SEPARADOR = r'(-|–)'
@@ -156,10 +153,7 @@ def p_l_comando(p):
             | comando
     '''
 
-    if len(p) > 2:
-        comandos.append(p[2])
-    else:
-        comandos.append(p[1])
+    #print(p.slice[1].type)
 
 def p_comando(p): 
     '''
@@ -168,7 +162,6 @@ def p_comando(p):
             | c_copy
             | c_transfer
             | c_rename
-            | c_modify
             | c_modify
             | c_backup
             | c_recovery
@@ -180,7 +173,7 @@ def p_comando(p):
 
 def p_parametro_name(p):
     '''
-        parametro_name : SEPARADOR NAME FLECHA name_parametos
+        parametro_name : SEPARADOR NAME FLECHA name_parametros
     '''
 
 def p_name_parametos(p):
@@ -190,17 +183,205 @@ def p_name_parametos(p):
                         | CADENA                        
     '''
 
-    p[0] = ['nombre_archivo',str(p[1])]
+    print(p.slice[1].type)
 
 def p_parametro_body(p):
     '''
         parametro_body : SEPARADOR BODY FLECHA CADENA
     '''
+    print(str(p[4]))
 
-#############################################################################################################################
+def p_parametro_path(p):
+    '''
+        parametro_path : SEPARADOR PATH FLECHA path_parametros
+    '''   
 
+def p_path_parametros(p):
+    '''
+        path_parametros : DIRECTORIO_CON_ARCHIVO
+                        | rutas_solo_directorios
+    '''
 
+    if p.slice[1].type != 'rutas_solo_directorios':
+            print(p.slice[1].type)
+   
 
+def p_rutas_solo_directorios(p):
+    '''
+        rutas_solo_directorios : SOLO_DIRECTORIO 
+    '''
+
+    print(p.slice[1].type)
+
+def p_parametro_type(p):
+    '''
+        parametro_type : SEPARADOR TYPE FLECHA TIPO_ALMACENAMIENTO
+    '''
+    print(p[4])
+
+def p_parametro_from(p): 
+    '''
+        parametro_from : SEPARADOR FROM FLECHA path_parametros
+    '''
+
+def p_parametro_to(p):
+    '''
+        parametro_to : SEPARADOR TO FLECHA rutas_solo_directorios
+    '''
+
+def p_parametro_type_to(p):
+    '''
+        parametro_type_to : SEPARADOR TYPE_TO FLECHA TIPO_ALMACENAMIENTO
+    '''
+    
+    print(p[4])
+
+def p_parametro_type_from(p):
+    '''
+        parametro_type_from : SEPARADOR TYPE_FROM FLECHA TIPO_ALMACENAMIENTO
+    '''
+
+    print(p[4])
+
+def p_parametro_ip(p):
+    '''
+        parametro_ip : SEPARADOR IP FLECHA DIRECCION_IP
+    '''
+
+def p_parametro_port(p):
+    '''
+        parametro_port : SEPARADOR PORT FLECHA NUMERO_PUERTO
+    '''
+
+def p_posible_parametro_create(p):
+    '''
+        posible_parametro_create : parametro_name
+                                 | parametro_path
+                                 | parametro_body
+                                 | parametro_type
+    '''
+
+    p[0] = p[1]
+
+def p_c_create(p):
+    '''
+        c_create : CREATE posible_parametro_create posible_parametro_create posible_parametro_create posible_parametro_create
+    '''
+
+def p_posible_parametro_delete(p):
+    '''
+        posible_parametro_delete : parametro_path
+                                 | parametro_name
+                                 | parametro_type
+    '''
+
+def p_c_delete(p):
+    '''
+        c_delete : DELETE posible_parametro_delete posible_parametro_delete posible_parametro_delete
+                 | DELETE posible_parametro_delete posible_parametro_delete
+    '''
+
+def p_posible_parametro_copy(p):
+    '''
+        posible_parametro_copy : parametro_from
+                               | parametro_to
+                               | parametro_type_to
+                               | parametro_type_from
+    '''
+
+def p_c_copy(p):
+    '''
+        c_copy : COPY posible_parametro_copy posible_parametro_copy posible_parametro_copy posible_parametro_copy
+    '''
+
+def p_posible_parametro_transfer(p):
+    '''
+        posible_parametro_transfer : parametro_from
+                                   | parametro_to
+                                   | parametro_type_to
+                                   | parametro_type_from
+    '''
+
+def p_c_transfer(p):
+    '''
+        c_transfer : TRANSFER posible_parametro_transfer posible_parametro_transfer posible_parametro_transfer posible_parametro_transfer
+    '''
+
+def p_posible_parametro_rename(p):
+    '''
+        posible_parametro_rename : parametro_path
+                                 | parametro_name
+                                 | parametro_type
+    '''
+
+def p_c_rename(p):
+    '''
+        c_rename : RENAME posible_parametro_rename posible_parametro_rename posible_parametro_rename
+    '''
+
+def p_posible_parametro_modify(p):
+    '''
+        posible_parametro_modify : parametro_path
+                                 | parametro_body
+                                 | parametro_type
+    '''
+
+def p_c_modify(p):
+    '''
+        c_modify : MODIFY posible_parametro_modify posible_parametro_modify posible_parametro_modify
+    '''
+
+def p_posible_parametro_backup(p):
+    '''
+        posible_parametro_backup : parametro_type_to
+                                 | parametro_type_from
+                                 | parametro_ip
+                                 | parametro_port
+                                 | parametro_name
+    '''
+
+def p_c_backup(p):
+    '''
+        c_backup : BACKUP posible_parametro_backup posible_parametro_backup posible_parametro_backup posible_parametro_backup posible_parametro_backup
+                 | BACKUP posible_parametro_backup posible_parametro_backup posible_parametro_backup posible_parametro_backup
+                 | BACKUP posible_parametro_backup posible_parametro_backup posible_parametro_backup
+    '''
+
+def p_posible_parametro_recovery(p):
+    '''
+        posible_parametro_recovery : parametro_type_to
+                                   | parametro_type_from
+                                   | parametro_ip
+                                   | parametro_port
+                                   | parametro_name
+    '''
+
+def p_c_recovery(p):
+    '''
+        c_recovery : RECOVERY posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery
+                   | RECOVERY posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery
+                   | RECOVERY posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery
+    '''
+
+def p_c_delete_all(p):
+    '''
+        c_delete_all : DELETE_ALL parametro_type 
+    '''
+
+def p_posible_parametro_open(p):
+    '''
+        posible_parametro_open : parametro_type
+                               | parametro_ip
+                               | parametro_port
+                               | parametro_name
+    '''
+
+def p_c_open(p):
+    '''
+        c_open : OPEN posible_parametro_open posible_parametro_open posible_parametro_open posible_parametro_open
+               | OPEN posible_parametro_open posible_parametro_open posible_parametro_open
+               | OPEN posible_parametro_open posible_parametro_open
+    '''
 
 
 def p_error(p):
@@ -210,7 +391,7 @@ def p_error(p):
 
 parser = yacc.yacc()
  
-entrada = ""
+entrada = "open -type->bucket  -port->3000  -ip->3.144.137.114        -name->\"archivo1.txt\""
 
 resultado = parser.parse(entrada, lexer=lexer)
 
