@@ -1,6 +1,7 @@
 import os
 import os.path
 from shutil import rmtree
+import shutil
 import regex as re
 
 dir_origen = "./Archivos"
@@ -26,6 +27,43 @@ def fun_eliminar(ruta_archivo,nombre_archivo):
             os.remove(ruta_eliminar)
         else:
             rmtree(ruta_eliminar)
+
+def fun_copiar(ruta_origen,ruta_destino,tipo_destino):
+    tipo = tipo_destino.lower()
+    ruta_origen_limpia = limpiar_ruta(ruta_origen)
+    ruta_destino_limpia = limpiar_ruta(ruta_destino)
+    if tipo == "server":
+        if os.path.exists(ruta_origen_limpia) and os.path.exists(ruta_destino_limpia):
+            #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
+            if os.path.isfile(ruta_origen_limpia):
+                #Se obiene el nombre del archivo
+                partes = ruta_origen_limpia.split("/")
+                nueva_partes = [x for x in partes if x != '']
+                for x in nueva_partes:
+                    if re.search(".*\.txt",x):
+                        nombre_archivo = x
+                        break
+                shutil.copyfile(ruta_origen_limpia,ruta_destino_limpia+nombre_archivo)
+            else:
+                shutil.copytree(ruta_origen_limpia,ruta_destino_limpia)
+
+def fun_transferir(ruta_origen,ruta_destino,tipo_destino):
+    tipo = tipo_destino.lower()
+    nombre_archivo = ""
+    ruta_origen_limpia = limpiar_ruta(ruta_origen)
+    ruta_destino_limpia = limpiar_ruta(ruta_destino)
+    if tipo == "server":
+        if os.path.exists(ruta_origen_limpia) and os.path.exists(ruta_destino_limpia):
+            #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
+            if os.path.isfile(ruta_origen_limpia):
+                #Se obiene el nombre del archivo
+                partes = ruta_origen_limpia.split("/")
+                nueva_partes = [x for x in partes if x != '']
+                for x in nueva_partes:
+                    if re.search(".*\.txt",x):
+                        nombre_archivo = x
+                        break
+            shutil.move(ruta_origen_limpia,ruta_destino_limpia+nombre_archivo)
 
 def fun_renombrar(ruta,nuevo_nombre):
     #Se limpia la ruta en caso alguna parte tenga doble comilla
@@ -98,8 +136,9 @@ def crear_carpeta(ruta):
         if not os.path.exists(rta) and not re.search(".*\.txt",x):
             os.makedirs(rta)
 
+#fun_transferir("/carpeta1","/carpeta2","server")
 #fun_crear("archivo_n.txt","contenido_archivo","/carpeta1")
 #fun_eliminar("/carpeta1","")
 #fun_renombrar("/carpeta1/archivo_n.txt","archivo_renombre.txt")
 #fun_modificar("/carpeta1/archivo_renombre.txt","Nuevo contenido")
-fun_eliminar_todo()
+#fun_eliminar_todo()
