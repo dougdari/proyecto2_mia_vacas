@@ -2,7 +2,7 @@ import os
 import shutil
 import boto3
 
-
+nombre_bucket_s3 = 'proyecto-2-mia'
 
 objeto_s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
@@ -305,7 +305,211 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                  print('ruta destino no es valida')
 
            
+def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):   
 
+    if tipo_from == 'bucket':
+        if tipo_to == 'bucket':
+
+            #server server
+
+            tipo1, verificacion1 = verificar_archivo_con_ruta_bucket(origen)
+            tipo2, verificacion2 = verificar_archivo_con_ruta_bucket(destino)
+
+            print('bucket - bucket',tipo1,verificacion1,tipo2,verificacion2)
+
+            if tipo2 == 'Carpeta':    
+
+                if tipo1 != '': 
+
+                    print('transferir')
+
+                    if tipo1 == 'Carpeta':
+
+                        origen = origen.replace('"','')
+                        if origen[0] == '/':
+                            origen = origen[ 1:len(origen)]
+                        
+                        destino = destino.replace('"','')
+                        if destino[0] == '/':
+                            destino = destino[ 1:len(destino)]
+
+                        ob_s3 = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+                        bucket = ob_s3.Bucket(nombre_bucket_s3)
+
+                        for obj in bucket.objects.filter(Prefix=origen):
+                            ruta_origen = obj.key
+                            ruta_destino = destino + ruta_origen
+                            bucket.copy({'Bucket': nombre_bucket_s3, 'Key': ruta_origen}, ruta_destino)
+
+                            print(origen)
+
+                        objeto_s3.delete_object(Bucket=nombre_bucket_s3, Key=origen)
+                    elif tipo1 == 'Archivo':
+
+                        origen = origen.replace('"','')
+                        if origen[0] == '/':
+                            origen = origen[ 1:len(origen)]
+                        
+                        destino = destino.replace('"','')
+                        if destino[0] == '/':
+                            destino = destino[ 1:len(destino)]
+
+                        nombre_archivo = nombre_archivo_descargado = os.path.basename(origen)
+                        objeto_s3.copy_object(Bucket=nombre_bucket_s3, CopySource=f'{nombre_bucket_s3}/{origen}', Key=f'{destino}{nombre_archivo}')
+
+                        print(origen)
+                        objeto_s3.delete_object(Bucket=nombre_bucket_s3, Key=origen)
+
+
+                    #
+
+                else:
+                    #reportar error---> ruta destino en el comando copiar no es valida
+                    print('la ruta origen no es valida')
+            else:
+                 #reportar error---> ruta destino en el comando copiar no es valida
+                 print('ruta destino no es valida')
+
+        else:
+            #server local
+            tipo1, verificacion1 = verificar_archivo_con_ruta_bucket(origen)
+            tipo2, verificacion2 = verificar_archivo_carpeta(destino)
+
+            print('bucket - server',tipo1,verificacion1,tipo2,verificacion2)
+
+            if tipo2 == 'Carpeta':
+
+                if tipo1 != '':
+                    print('transferir')
+
+                    if tipo1 == 'Carpeta':
+
+                        origen = origen.replace('"','')
+                        if origen[0] == '/':
+                            origen = origen[ 1:len(origen)]
+                        
+                        destino = destino.replace('"','')
+                        if destino[0] == '/':
+                            destino = destino[ 1:len(destino)]
+
+                        def descarga_recursiva(ruta_origen, ruta_destino):
+                            objeto_s3.download_file( nombre_bucket_s3, ruta_origen, ruta_destino)
+
+                        def copiar_carpeta(origen_, destino_):
+                            contenido = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen_)['Contents']
+
+                            for archivo_carpeta in contenido:
+                                ruta_nuevo_origen = archivo_carpeta['Key']
+                                ruta_nuevo_destino = os.path.join(destino_, ruta_nuevo_origen)
+
+                                if ruta_nuevo_origen.endswith('/'):  
+                                    os.makedirs(ruta_nuevo_destino, exist_ok=True)
+                                else:  
+                                    descarga_recursiva(ruta_nuevo_origen, ruta_nuevo_destino)
+
+                        shutil.rmtree(origen)
+
+                    elif tipo1 == 'Archivo':
+
+                        print(destino)
+
+                        origen = origen.replace('"','')
+                        if origen[0] == '/':
+                            origen = origen[ 1:len(origen)]
+                        
+                        destino = destino.replace('"','')
+                        if destino[0] == '/':
+                            destino = destino[ 1:len(destino)]
+
+                        print(destino,origen)
+                        os.makedirs(destino, exist_ok=True)                      
+                        nombre_archivo_descargado = os.path.basename(origen)
+                        objeto_s3.download_file(nombre_bucket_s3, origen, destino + nombre_archivo_descargado)
+
+                          
+
+                else:
+                    #reportar error---> ruta destino en el comando copiar no es valida
+                    print('la ruta origen no es valida')
+            else:
+                 #reportar error---> ruta destino en el comando copiar no es valida
+                 print('ruta destino no es valida')
+            
+    else:
+        if tipo_to == 'bucket':
+
+            #local server
+
+            tipo1, verificacion1 = verificar_archivo_carpeta(origen)
+            tipo2, verificacion2 = verificar_archivo_con_ruta_bucket(destino)
+
+            print('server - bucket',tipo1,verificacion1,tipo2,verificacion2)
+
+            if tipo2 == 'Carpeta':
+
+                if tipo1 != '':
+                    print('transferir')
+
+                    origen = origen.replace('"','')
+                    if origen[0] == '/':
+                        origen = origen[ 1:len(origen)]
+                    
+                    destino = destino.replace('"','')
+                    if destino[0] == '/':
+                        destino = destino[ 1:len(destino)]
+
+                    if(tipo1 == 'Carpeta'):
+
+                        for root, dirs, files in os.walk(origen):
+                            for file in files:
+                                
+                                if os.path.basename(file) != 'desktop.ini':
+                                    ruta_archivo_local = os.path.join(root, file)
+                                    ruta_archivo_s3 = os.path.join(destino, os.path.relpath(ruta_archivo_local, origen))
+                                    ruta_archivo_s3 = ruta_archivo_s3.replace('\\','/')
+                                    objeto_s3.upload_file(ruta_archivo_local, nombre_bucket_s3, ruta_archivo_s3)                                
+                                
+                            for dir in dirs:
+                                ruta_carpeta_local = os.path.join(root, dir)
+                                ruta_carpeta_s3 = os.path.join(destino, os.path.relpath(ruta_carpeta_local, origen))
+                                ruta_carpeta_s3 = ruta_carpeta_s3.replace('\\','/')
+                                objeto_s3.put_object(Bucket=nombre_bucket_s3, Key=ruta_carpeta_s3 + '/')  
+
+                        shutil.rmtree(origen)                        
+
+                    elif(tipo1 == 'Archivo'):
+
+                        objeto_s3.upload_file(origen, nombre_bucket_s3, destino + os.path.basename(origen))                        
+                        os.remove(origen) 
+
+                else:
+                    #reportar error---> ruta destino en el comando copiar no es valida
+                    print('la ruta origen no es valida')
+            else:
+                #reportar error---> ruta destino en el comando copiar no es valida
+                print('ruta destino no es valida')
+        else:
+
+            #local local
+            tipo1, verificacion1 = verificar_archivo_carpeta(origen)
+            tipo2, verificacion2 = verificar_archivo_carpeta(destino)
+
+            print('server - server',tipo1,verificacion1,tipo2,verificacion2)
+
+            if tipo2 == 'Carpeta':
+
+                
+                if tipo1 != '':
+                    print('transferir')
+
+
+                    ##//llamar ala funcioncion solo copia local------------------------------------------> sustituir aca
+                else:
+                    #reportar error---> ruta destino en el comando copiar no es valida
+                    print('la ruta origen no es valida')
+            else:
+                 #reportar error---> ruta destino en el comando copiar no es valida
+                 print('ruta destino no es valida')
 
 
 
