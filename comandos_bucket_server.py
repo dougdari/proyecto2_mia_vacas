@@ -4,7 +4,7 @@ import boto3
 
 nombre_bucket_s3 = 'proyecto-2-mia'
 
-objeto_s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+objeto_s3 = boto3.client('s3')
 
 def crear_directorio_archivo(nombre,destino,contenido):
 
@@ -157,7 +157,7 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                     if destino[0] == '/':
                         destino = destino[ 1:len(destino)]
 
-                    ob_s3 = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+                    ob_s3 = boto3.resource('s3')
                     bucket = ob_s3.Bucket(nombre_bucket_s3)
 
                     for obj in bucket.objects.filter(Prefix=origen):
@@ -333,7 +333,7 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         if destino[0] == '/':
                             destino = destino[ 1:len(destino)]
 
-                        ob_s3 = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+                        ob_s3 = boto3.resource('s3')
                         bucket = ob_s3.Bucket(nombre_bucket_s3)
 
                         for obj in bucket.objects.filter(Prefix=origen):
