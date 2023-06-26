@@ -1,0 +1,20 @@
+body {
+    padding-top: 150px;
+    text-align: center;
+    background-color: #ffc226;
+}
+form {
+    display: inline-block;
+}
+
+#output_comando{
+    width: 500px;
+}
+
+#output_respuesta{
+    width: 500px;
+}
+
+#comando_escrito{
+    width: 300px;
+}
