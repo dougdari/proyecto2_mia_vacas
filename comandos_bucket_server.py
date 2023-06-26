@@ -511,12 +511,125 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                  #reportar error---> ruta destino en el comando copiar no es valida
                  print('ruta destino no es valida')
 
+        
+def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta):
+
+
+    if verificar_directorio(ruta):
+
+        nombre = nombre.replace('"','')
+    
+        if ruta.endswith('/'):
+            ruta = ruta[:-1]
+
+        if ruta.startswith('/'):
+            ruta = ruta[1:]
+
+        ruta = ruta.replace('"','')
+
+        solo_ruta = os.path.dirname(ruta)
+
+        solo_nombre_viejo = os.path.basename(ruta)
+
+        print(solo_nombre_viejo)
+
+        print(solo_ruta)
+
+        if len(solo_ruta) > 0 :
+            solo_ruta = solo_ruta + '/'
+
+        print(solo_ruta + nombre,' , ',ruta)
+
+
+        peticion = objeto_s3.list_objects(Bucket=nombre_bucket_s3, Prefix=ruta)
+        for content in peticion.get('Contents', []):
+            key = content['Key']
+            new_key = key.replace(ruta, solo_ruta + nombre)
+            objeto_s3.copy_object(Bucket=nombre_bucket_s3, CopySource={'Bucket': nombre_bucket_s3, 'Key': key},
+                        Key=new_key)
+
+
+
+        peticion = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=ruta)
+
+        if 'Contents' in peticion:
+        
+            objetos_a_eliminar = [{'Key': objeto['Key']} for objeto in peticion['Contents']]
+            objeto_s3.delete_objects(Bucket=nombre_bucket_s3, Delete={'Objects': objetos_a_eliminar})
+        else:                
+            print('Algun error')
+            #### reportar error
+
+    else:
+        print("La ruta del archivo o carpeta para renombrar no se pudo verificar")
+
+
+def modificar_archivo_bucket(ruta,body):
+
+    if verificar_directorio(ruta):
+
+        ruta = ruta.replace('"','')
+
+        if ruta.startswith('/'):
+            ruta = ruta[1:]
+    
+        if ruta.endswith('/'):
+            ruta = ruta[:-1]
+
+        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key=ruta, Body=body)
+
+    else:
+        print("La ruta del archivo o carpeta para MODIFICAR no se pudo verificar")
+
+def eliminar_todo_el_contenido_bucket():
+
+    aux_s3 = boto3.resource('s3')
+    bucket = aux_s3.Bucket(nombre_bucket_s3)
+
+    for objeto in bucket.objects.all():
+        objeto.delete()
+
+    print("CONTENIDO DEL BUCKET ELIMINADO")
 
 
 
 
 
 
+#modificar_archivo_bucket('/en_la_raiz.txt','Nuevo contenido 7777')
+
+#eliminar_todo_el_contenido_bucket()
+
+
+
+
+
+
+
+
+
+
+
+
+#print(verificar_archivo_con_ruta_bucket('/"carpeta 2"/destinoArchivo/otro_archivo.txt'))
+#copiar_archivos_carpetas('/"carpeta 2"/destinoArchivo/otro_archivo.txt','/"carpeta 2"/destinoArchivo/otro_archivo.txt','server','server')
+#copiar_archivos_carpetas('C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/Texto 1.txt','C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/','bucket','bucket')
+
+#crear_directorio_archivo('otro_archivo1.txt','/"carpeta 2"/destinoArchivo/','Este es el contenido del archivo')
+#print(verificar_archivo_dentro_directorio('otro_archivo.txt','/"carpeta 2"/destinoArchivo/'))
+#print(verificar_directorio('/"carpeta 2"/destinoArchivo/'))
+
+#eliminar_direcotrio_archivo('','/"carpeta 3"')
+
+#copiar_archivos_carpetas('/carpeta 2/destinoArchivo/','C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/','bucket','server')
+
+#eliminar_direcotrio_archivo_bucket('','carpeta 2/')
+#crear_directorio_archivo('otro.txt','/"carpeta 6"/','Este es el contenido del archivo')
+
+
+#eliminar_direcotrio_archivo_bucket('','carpeta 2/')
+#transfer_archivos_carpetas('/"carpeta 4"/','/"carpeta 1"/','bucket','bucket')
+#cambiar_nombre_archivo_carpeta_bucket('\"carpeta 77 nueva\"','/\"carpeta 5\"/')
 
 
 
