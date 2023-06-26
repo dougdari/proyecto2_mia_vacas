@@ -2,9 +2,7 @@ import os
 import shutil
 import boto3
 
-AWS_ACCESS_KEY_ID = 'AKIARESZ4WKTWMJAX5ZO'
-AWS_SECRET_ACCESS_KEY = '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'
-nombre_bucket_s3 = 'proyecto-2-mia'
+
 
 objeto_s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
@@ -148,6 +146,8 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
             if tipo2 == 'Carpeta':    
 
                 if tipo1 != '':
+
+                    print('copiar')
 
                     origen = origen.replace('"','')
                     if origen[0] == '/':
