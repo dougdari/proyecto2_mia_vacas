@@ -82,6 +82,7 @@ tokens = (
     'NUMERO_PUERTO',
     'OPEN',   
     'DIRECTORIO_CON_ARCHIVO',
+    'DIRECTORIO_CON_CARPETA_ABIERTA',
     'NOMBRE_ARCHIVO',
     'NOMBRE_ARCHIVO_COMILLAS',
     'SOLO_DIRECTORIO',
@@ -117,10 +118,12 @@ t_NUMERO_PUERTO = r'\b(?:[0-9]{1,4})\b'
 
 t_DIRECTORIO_CON_ARCHIVO = r'[\/](([a-zA-Z0-9_-]+|\"[a-zA-Z0-9_ -]+\")[\/])*(([a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\.[a-zA-Z0-9_-]+\"))'
 
+t_DIRECTORIO_CON_CARPETA_ABIERTA = r'[\/](([a-zA-Z0-9_-]+|\"[a-zA-Z0-9_ -]+\")[\/])*(([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))'
+
 t_NOMBRE_ARCHIVO = r'[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+'
 t_NOMBRE_ARCHIVO_COMILLAS = r'\"[a-zA-Z0-9 _-]+\.[a-zA-Z0-9_-]+\"'
 
-t_SOLO_DIRECTORIO = r'[\/]((([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))[\/]?)*'
+t_SOLO_DIRECTORIO = r'[\/]((([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))[\/])*'
 
 
 t_FLECHA = r'(-|–)>'
@@ -229,6 +232,7 @@ def p_path_parametros(p):
 def p_rutas_solo_directorios(p):
     '''
         rutas_solo_directorios : SOLO_DIRECTORIO 
+                               | DIRECTORIO_CON_CARPETA_ABIERTA  
     '''
 
     p[0] = ['directorio',str(p[1])]
