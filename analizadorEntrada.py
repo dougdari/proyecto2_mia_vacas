@@ -79,12 +79,12 @@ tokens = (
     'PORT',
     'RECOVERY',
     'DIRECCION_IP',
+    'SOLO_DIRECTORIO',
     'NUMERO_PUERTO',
     'OPEN',   
     'DIRECTORIO_CON_ARCHIVO',
     'NOMBRE_ARCHIVO',
-    'NOMBRE_ARCHIVO_COMILLAS',
-    'SOLO_DIRECTORIO',
+    'NOMBRE_ARCHIVO_COMILLAS',    
     'FLECHA',
     'SEPARADOR',   
     'CADENA',
@@ -115,12 +115,14 @@ t_OPEN = r'(O|o)(P|p)(E|e)(N|n)'
 t_DIRECCION_IP = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 t_NUMERO_PUERTO = r'\b(?:[0-9]{1,4})\b'
 
+t_SOLO_DIRECTORIO = r'[\/]((([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))[\/])* (([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))?'
+
 t_DIRECTORIO_CON_ARCHIVO = r'[\/](([a-zA-Z0-9_-]+|\"[a-zA-Z0-9_ -]+\")[\/])*(([a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\.[a-zA-Z0-9_-]+\"))'
 
 t_NOMBRE_ARCHIVO = r'[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+'
 t_NOMBRE_ARCHIVO_COMILLAS = r'\"[a-zA-Z0-9 _-]+\.[a-zA-Z0-9_-]+\"'
 
-t_SOLO_DIRECTORIO = r'[\/]((([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))[\/])*(((([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))|(([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))[\/]))?'
+
 
 
 t_FLECHA = r'(-|–)>'
@@ -215,8 +217,8 @@ def p_parametro_path(p):
 
 def p_path_parametros(p):
     '''
-        path_parametros : DIRECTORIO_CON_ARCHIVO
-                        | rutas_solo_directorios
+        path_parametros : rutas_solo_directorios
+                        | DIRECTORIO_CON_ARCHIVO
     '''
 
     if p.slice[1].type != 'rutas_solo_directorios':
@@ -266,7 +268,7 @@ def p_parametro_type_from(p):
         parametro_type_from : SEPARADOR TYPE_FROM FLECHA TIPO_ALMACENAMIENTO
     '''
 
-    p[0] = ['type',str(p[4]).lower().replace('"', '')]
+    p[0] = ['type_from',str(p[4]).lower().replace('"', '')]
 
 def p_parametro_ip(p):
     '''
@@ -478,11 +480,11 @@ def p_error(p):
 parser = yacc.yacc()
 #entrada = "delete -path->/\"carpeta 2\"/ -type->bucket open -type->\"bUcKet\"  -port->3000  -ip->3.144.137.114  -name->/\"Mi carpeta\"/\"archivo1.txt\"  create -name->prueba1.txt -path->/carpeta1/ -body->\"Este es el contenido del archivo 1\" -type->server"
 
-entrada = 'Create -namE->calificacion4.txt -path->/"carpeta ejemplo" -body->"Contenido del archivo calificacion4 carpeta ejemplo 2" -Type->server' 
-resultado = parser.parse(entrada, lexer=lexer)
+#entrada = 'creatE -name->calificacion1.txt -path->/carpeta_calificacion1/ -bodY->"Contenido del archivo calificacion1 carpeta_calificacion1" -type->server Create -name->calificacion2.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion2 carpeta_calificacion1" -Type->server Create -namE->calificacion3.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion3 carpeta_calificacion1" -Type->server Create -namE->calificacion4.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion4 carpeta_calificacion1" -Type->server creatE -name->calificacion1.txt -path->/carpeta_calificacion1/ -bodY->"Contenido del archivo calificacion1 carpeta_calificacion1" -type->bucket Create -name->calificacion2.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion2 carpeta_calificacion1" -Type->bucket Create -namE->calificacion3.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion3 carpeta_calificacion1" -Type->bucket Create -namE->calificacion4.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion4 carpeta_calificacion1" -Type->bucket MODIFY -path->/carpeta_calificacion1/calificacion1.txt -type->bucket -bodY->"Contenido del archivo calificacion1 carpeta_calificacion1 en el bucket" MODIFy -path->/carpeta_calificacion1/calificacion2.txt -Type->bucket -body->"Contenido del archivo calificacion2 carpeta_calificacion1 en el bucket" MoDIFY -path->/carpeta_calificacion1/calificacion3.txt -Type->bucket -body->"Contenido del archivo calificacion3 carpeta_calificacion1 en el bucket" modifY -path->/carpeta_calificacion1/calificacion4.txt -Type->bucket -body->"Contenido del archivo calificacion4 carpeta_calificacion1 en el bucket" DELETE -path->/carpeta_calificacion1/calificacion4.txt -Type->server creatE -name->calificacion1.txt -path->/"carpeta ejemplo"/ -bodY->"Contenido del archivo calificacion1 carpeta ejemplo" -type->server Create -name->calificacion2.txt -path->/"carpeta ejemplo"/ -body->"Contenido del archivo calificacion2 carpeta ejemplo" -Type->server Create -namE->calificacion3.txt -path->/"carpeta ejemplo"/ejemplo1 -body->"Contenido del archivo calificacion3 carpeta ejemplo" -Type->server Create -namE->calificacion4.txt -path->/"carpeta ejemplo"/ejemplo1 -body->"Contenido del archivo calificacion4 carpeta ejemplo" -Type->server Create -namE->calificacion3.txt -path->/"carpeta ejemplo"/ejemplo2 -body->"Contenido del archivo calificacion3 carpeta ejemplo 2" -Type->server Create -namE->calificacion4.txt -path->/"carpeta ejemplo"/ejemplo2 -body->"Contenido del archivo calificacion4 carpeta ejemplo 2" -Type->server Create -namE->calificacion3.txt -path->/"carpeta ejemplo"/ejemplo3 -body->"Contenido del archivo calificacion3 carpeta ejemplo 2" -Type->server Create -namE->calificacion4.txt -path->/"carpeta ejemplo"/ejemplo3 -body->"Contenido del archivo calificacion4 carpeta ejemplo 2" -Type->server DELETE -TYPE->server -paTh->/"carpeta ejemplo"/ejemplo3/calificacion4.txt MoDIFY -path->/"carpeta ejemplo"/ejemplo1/calificacion3.txt -Type->server -body->"Contenido del archivo calificacion3 carpeta ejemplo ejemplo1" modifY -path->/"carpeta ejemplo"/ejemplo1/calificacion4.txt -Type->server -body->"Contenido del archivo calificacion4 carpeta ejemplo ejemplo1" rename -path->/carpeta_calificacion1/calificacion1.txt -type->bucket -Name->"calificacion bucket 1" rename -path->/carpeta_calificacion1/calificacion2.txt -type->bucket -Name->"calificacion bucket 2" rename -path->/carpeta_calificacion1/calificacion1.txt -type->server -Name->"calificacion server 1" DELETE -TYPE->bucket -paTh->/carpeta_calificacion1/calificacion4.txt creatE -name->calificacion1.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3/ -bodY->"Contenido del archivo calificacion1 carpeta ejemplo" -type->bucket Create -name->calificacion2.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3/ -body->"Contenido del archivo calificacion2 carpeta ejemplo" -Type->bucket Create -namE->calificacion3.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo4/ -body->"Contenido del archivo calificacion3 carpeta ejemplo" -Type->bucket Create -namE->calificacion4.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo4/ -body->"Contenido del archivo calificacion4 carpeta ejemplo" -Type->bucket copy -from->/"carpeta ejemplo"/ejemplo2 -type_from->server -type_to->server -to->/"carpeta ejemplo"/ copy -from->/"carpeta ejemplo"/ejemplo2 -to->/"carpeta ejemplo"/ejemplo1 -type_from->server -type_to->server copy -from->/"carpeta ejemplo"/ejemplo2 -to->/carpeta_calificacion1/"carpeta ejemplo"/ -type_from->server -type_to->bucket copy -from->/"carpeta ejemplo"/ejemplo2 -to->/carpeta_calificacion1/"carpeta ejemplo"/ -type_from->server -type_to->bucket copy -to->/"carpeta ejemplo"/ejemplo2 -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->server copy -to->/carpeta_calificacion1/"carpeta ejemplo"  -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->bucket Transfer -from->/carpeta_calificacion_1/"calificacion server 1.txt" -type_from->server -type_to->server -to->/"carpeta ejemplo"/ Transfer -to->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3 -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->bucket Transfer -from->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3/calificacion1.txt -to->/"carpeta ejemplo"/ -type_from->bucket -type_to->server' 
+#resultado = parser.parse(entrada, lexer=lexer)
 
 
-print("Resultado: {}".format(resultado))
+#print("Resultado: {}".format(resultado))
 
-for indice, elemento in enumerate(comandos):
-    print(elemento)
+#for indice, elemento in enumerate(comandos):
+    #print(elemento)

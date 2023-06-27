@@ -23,8 +23,8 @@ Rule 17    name_parametros -> DIRECTORIO_CON_ARCHIVO
 Rule 18    name_parametros -> CADENA
 Rule 19    parametro_body -> SEPARADOR BODY FLECHA CADENA
 Rule 20    parametro_path -> SEPARADOR PATH FLECHA path_parametros
-Rule 21    path_parametros -> DIRECTORIO_CON_ARCHIVO
-Rule 22    path_parametros -> rutas_solo_directorios
+Rule 21    path_parametros -> rutas_solo_directorios
+Rule 22    path_parametros -> DIRECTORIO_CON_ARCHIVO
 Rule 23    rutas_solo_directorios -> SOLO_DIRECTORIO
 Rule 24    parametro_type -> SEPARADOR TYPE FLECHA TIPO_ALMACENAMIENTO
 Rule 25    parametro_from -> SEPARADOR FROM FLECHA path_parametros
@@ -96,7 +96,7 @@ CREATE               : 35
 DELETE               : 39 40
 DELETE_ALL           : 75
 DIRECCION_IP         : 29
-DIRECTORIO_CON_ARCHIVO : 17 21
+DIRECTORIO_CON_ARCHIVO : 17 22
 FLECHA               : 14 19 20 24 25 26 27 28 29 30
 FROM                 : 25
 IP                   : 29
@@ -156,7 +156,7 @@ posible_parametro_open : 80 80 80 80 81 81 81 82 82
 posible_parametro_recovery : 72 72 72 72 72 73 73 73 73 74 74 74
 posible_parametro_rename : 54 54 54
 posible_parametro_transfer : 50 50 50 50
-rutas_solo_directorios : 22 26
+rutas_solo_directorios : 21 26
 
 Parsing method: LALR
 
@@ -1906,15 +1906,15 @@ state 97
 state 98
 
     (20) parametro_path -> SEPARADOR PATH FLECHA . path_parametros
-    (21) path_parametros -> . DIRECTORIO_CON_ARCHIVO
-    (22) path_parametros -> . rutas_solo_directorios
+    (21) path_parametros -> . rutas_solo_directorios
+    (22) path_parametros -> . DIRECTORIO_CON_ARCHIVO
     (23) rutas_solo_directorios -> . SOLO_DIRECTORIO
 
-    DIRECTORIO_CON_ARCHIVO shift and go to state 122
+    DIRECTORIO_CON_ARCHIVO shift and go to state 123
     SOLO_DIRECTORIO shift and go to state 124
 
     path_parametros                shift and go to state 121
-    rutas_solo_directorios         shift and go to state 123
+    rutas_solo_directorios         shift and go to state 122
 
 state 99
 
@@ -1970,15 +1970,15 @@ state 102
 state 103
 
     (25) parametro_from -> SEPARADOR FROM FLECHA . path_parametros
-    (21) path_parametros -> . DIRECTORIO_CON_ARCHIVO
-    (22) path_parametros -> . rutas_solo_directorios
+    (21) path_parametros -> . rutas_solo_directorios
+    (22) path_parametros -> . DIRECTORIO_CON_ARCHIVO
     (23) rutas_solo_directorios -> . SOLO_DIRECTORIO
 
-    DIRECTORIO_CON_ARCHIVO shift and go to state 122
+    DIRECTORIO_CON_ARCHIVO shift and go to state 123
     SOLO_DIRECTORIO shift and go to state 124
 
     path_parametros                shift and go to state 128
-    rutas_solo_directorios         shift and go to state 123
+    rutas_solo_directorios         shift and go to state 122
 
 state 104
 
@@ -2302,38 +2302,38 @@ state 121
 
 state 122
 
-    (21) path_parametros -> DIRECTORIO_CON_ARCHIVO .
+    (21) path_parametros -> rutas_solo_directorios .
 
-    SEPARADOR       reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    CREATE          reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    DELETE          reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    COPY            reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    TRANSFER        reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    RENAME          reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    MODIFY          reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    BACKUP          reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    RECOVERY        reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    DELETE_ALL      reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    OPEN            reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
-    $end            reduce using rule 21 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    SEPARADOR       reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    CREATE          reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    DELETE          reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    COPY            reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    TRANSFER        reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    RENAME          reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    MODIFY          reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    BACKUP          reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    RECOVERY        reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    DELETE_ALL      reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    OPEN            reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
+    $end            reduce using rule 21 (path_parametros -> rutas_solo_directorios .)
 
 
 state 123
 
-    (22) path_parametros -> rutas_solo_directorios .
+    (22) path_parametros -> DIRECTORIO_CON_ARCHIVO .
 
-    SEPARADOR       reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    CREATE          reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    DELETE          reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    COPY            reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    TRANSFER        reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    RENAME          reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    MODIFY          reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    BACKUP          reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    RECOVERY        reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    DELETE_ALL      reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    OPEN            reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
-    $end            reduce using rule 22 (path_parametros -> rutas_solo_directorios .)
+    SEPARADOR       reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    CREATE          reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    DELETE          reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    COPY            reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    TRANSFER        reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    RENAME          reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    MODIFY          reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    BACKUP          reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    RECOVERY        reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    DELETE_ALL      reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    OPEN            reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
+    $end            reduce using rule 22 (path_parametros -> DIRECTORIO_CON_ARCHIVO .)
 
 
 state 124
