@@ -153,8 +153,12 @@ def verificar_archivo_con_ruta_bucket(directorio):
         return tipo_ruta, True
     else:
         return '', False 
+    
 
 def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):   
+
+    origen = origen.replace('"','')
+    destino = destino.replace('"','')
 
     if tipo_from == 'bucket':
         if tipo_to == 'bucket':
@@ -172,21 +176,36 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
 
                     print('copiar')
 
-                    origen = origen.replace('"','')
-                    if origen[0] == '/':
-                        origen = origen[ 1:len(origen)]
+                    if tipo1 == 'Carpeta':
+
+                        origen = origen.replace('"','')
+                        if origen[0] == '/':
+                            origen = origen[ 1:len(origen)]
+                        
+                        destino = destino.replace('"','')
+                        if destino[0] == '/':
+                            destino = destino[ 1:len(destino)]
+
+                        ob_s3 = boto3.resource('s3')
+                        bucket = ob_s3.Bucket(nombre_bucket_s3)
+
+                        for obj in bucket.objects.filter(Prefix=origen):
+                            ruta_origen = obj.key
+                            ruta_destino = destino + ruta_origen
+                            bucket.copy({'Bucket': nombre_bucket_s3, 'Key': ruta_origen}, ruta_destino)
                     
-                    destino = destino.replace('"','')
-                    if destino[0] == '/':
-                        destino = destino[ 1:len(destino)]
+                    elif tipo1 == 'Archivo': 
 
-                    ob_s3 = boto3.resource('s3')
-                    bucket = ob_s3.Bucket(nombre_bucket_s3)
+                        origen = origen.replace('"','')
+                        if origen[0] == '/':
+                            origen = origen[ 1:len(origen)]
+                        
+                        destino = destino.replace('"','')
+                        if destino[0] == '/':
+                            destino = destino[ 1:len(destino)]
 
-                    for obj in bucket.objects.filter(Prefix=origen):
-                        ruta_origen = obj.key
-                        ruta_destino = destino + ruta_origen
-                        bucket.copy({'Bucket': nombre_bucket_s3, 'Key': ruta_origen}, ruta_destino)
+                        nombre_archivo = nombre_archivo_descargado = os.path.basename(origen)
+                        objeto_s3.copy_object(Bucket=nombre_bucket_s3, CopySource=f'{nombre_bucket_s3}/{origen}', Key=f'{destino}{nombre_archivo}')
 
                 else:
                     #reportar error---> ruta destino en el comando copiar no es valida
@@ -236,6 +255,8 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
 
                     elif tipo1 == 'Archivo':
 
+                        print(destino)
+
                         origen = origen.replace('"','')
                         if origen[0] == '/':
                             origen = origen[ 1:len(origen)]
@@ -244,6 +265,7 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         if destino[0] == '/':
                             destino = destino[ 1:len(destino)]
 
+                        print(destino,origen)
                         os.makedirs(destino, exist_ok=True)                      
                         nombre_archivo_descargado = os.path.basename(origen)
                         objeto_s3.download_file(nombre_bucket_s3, origen, destino + nombre_archivo_descargado)
@@ -318,6 +340,7 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
 
                 
                 if tipo1 != '':
+                    print('copiar')
                     if os.path.exists(origen) and os.path.exists(destino):
                         #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
                         if os.path.isfile(origen):
@@ -337,8 +360,14 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
             else:
                  #reportar error---> ruta destino en el comando copiar no es valida
                  print('ruta destino no es valida')
-    
+
+
+
 def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):   
+
+
+    origen = origen.replace('"','')
+    destino = destino.replace('"','')
 
     if tipo_from == 'bucket':
         if tipo_to == 'bucket':
@@ -374,9 +403,19 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                             ruta_destino = destino + ruta_origen
                             bucket.copy({'Bucket': nombre_bucket_s3, 'Key': ruta_origen}, ruta_destino)
 
-                            print(origen)
+                        print(origen)
 
-                        objeto_s3.delete_object(Bucket=nombre_bucket_s3, Key=origen)
+                        peticion = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen)
+
+                        if 'Contents' in peticion:
+                        
+                            objetos_a_eliminar = [{'Key': objeto['Key']} for objeto in peticion['Contents']]
+                            objeto_s3.delete_objects(Bucket=nombre_bucket_s3, Delete={'Objects': objetos_a_eliminar})
+                        else:                
+                            print('Algun error')
+                            #### reportar error
+
+
                     elif tipo1 == 'Archivo':
 
                         origen = origen.replace('"','')
@@ -545,6 +584,8 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
             else:
                  #reportar error---> ruta destino en el comando copiar no es valida
                  print('ruta destino no es valida')
+
+
      
 def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta):
 
