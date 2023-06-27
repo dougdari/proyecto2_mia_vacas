@@ -3,14 +3,7 @@ import boto3
 import Encriptador
 lista_usuarios = []
 
-AWS_ACCESS_KEY_ID = 'AKIARESZ4WKTWMJAX5ZO'
-AWS_SECRET_ACCESS_KEY = '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'
-nombre_bucket_s3 = 'proyecto-2-mia'
-
-session = boto3.Session(
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-)
+session = boto3.Session()
 s3_resource = session.resource('s3')
 
 def contenido_usuarios():

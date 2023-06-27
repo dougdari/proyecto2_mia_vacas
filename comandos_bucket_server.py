@@ -5,6 +5,8 @@ import boto3
 nombre_bucket_s3 = 'proyecto-2-mia'
 
 objeto_s3 = boto3.client('s3')
+session = boto3.Session()
+s3_resource = session.resource('s3')
 
 def crear_directorio_archivo(nombre,destino,contenido):
 
@@ -53,7 +55,6 @@ def verificar_archivo_dentro_directorio(archivo, directorio):
 
     return encontrado        
 
-
 def eliminar_direcotrio_archivo(nombre,origen):
 
     origen = origen.replace('"','')
@@ -90,7 +91,6 @@ def eliminar_direcotrio_archivo(nombre,origen):
         print("La ruta no existe")
         ####### reportar error
     
-
 def verificar_archivo_carpeta(directorio):
 
     directorio = directorio.replace('"','')
@@ -102,8 +102,6 @@ def verificar_archivo_carpeta(directorio):
     else:
         return '', False
     
-
-
 def verificar_archivo_con_ruta_bucket(directorio):
     # Verificar si la ruta es un archivo
 
@@ -128,8 +126,6 @@ def verificar_archivo_con_ruta_bucket(directorio):
         return tipo_ruta, True
     else:
         return '', False 
-
-
 
 def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):   
 
@@ -303,8 +299,7 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
             else:
                  #reportar error---> ruta destino en el comando copiar no es valida
                  print('ruta destino no es valida')
-
-           
+    
 def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):   
 
     if tipo_from == 'bucket':
@@ -510,8 +505,7 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
             else:
                  #reportar error---> ruta destino en el comando copiar no es valida
                  print('ruta destino no es valida')
-
-        
+     
 def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta):
 
 
@@ -563,7 +557,6 @@ def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta):
     else:
         print("La ruta del archivo o carpeta para renombrar no se pudo verificar")
 
-
 def modificar_archivo_bucket(ruta,body):
 
     if verificar_directorio(ruta):
@@ -591,13 +584,61 @@ def eliminar_todo_el_contenido_bucket():
 
     print("CONTENIDO DEL BUCKET ELIMINADO")
 
+def crear_backup(tipo_to,tipo_from,ip,port,name_copy):
+    if tipo_from == 'server':
+        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key='Archivos/'+name_copy+"/")
+        destino = '/Archivos/'+name_copy
+        origen = './Archivos/'
+    else:
+        if not os.path.exists('./Archivos/'+name_copy):
+            os.mkdir('./Archivos/'+name_copy)
+        destino = './Archivos/'+name_copy
+        origen = '/Archivos/'
+    
+    if(ip == '' and port == ''):
+        copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to)
 
+def crear_recovery(tipo_to,tipo_from,ip,port,name_copy):
+    if tipo_from == 'server':
+        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key='Archivos/'+name_copy+"_recovered/")
+        destino = '/Archivos/'+name_copy+"_recovered/"
+        origen = './Archivos/'+name_copy
+    else:
+        if not os.path.exists('./Archivos/'+name_copy):
+            os.mkdir('./Archivos/'+name_copy+"_recovered/")
+        destino = './Archivos/'+name_copy+"_recovered/"
+        origen = '/Archivos/'+name_copy
+    
+    if(ip == '' and port == ''):
+        copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to)
 
+def open_archivo(tipo,ip,port,name_file):
+    if tipo == "bucket":
+        try:
+            s3_object = s3_resource.Object(
+                bucket_name='proyecto-2-mia', 
+                key=name_file
+            )
+            s3_response = s3_object.get()
+            s3_object_body = s3_response.get('Body')
+            global content_str 
+            content_str = s3_object_body.read().decode()
+            print(content_str)
+        except s3_resource.meta.client.exceptions.NoSuchBucket as e:
+            print('NO EXISTE EL BUCKET INDICADO')
+            print(e)
 
-
-
+        except s3_resource.meta.client.exceptions.NoSuchKey as e:
+            print('NO EXISTE EL ARCHIVO QUE SE DESEA LEER')
+            print(e)
+    else:
+        nombre = "./"+name_file
+        f = open(nombre)
+        print(f.read())
+#open_archivo("server","","","Archivos/sub_carpeta1/Archivo.txt")
 #modificar_archivo_bucket('/en_la_raiz.txt','Nuevo contenido 7777')
-
+#crear_backup('server','bucket',"","","copi1_b")
+#crear_recovery('bucket','server',"","","copi1_b")
 #eliminar_todo_el_contenido_bucket()
 
 
@@ -650,7 +691,7 @@ def eliminar_todo_el_contenido_bucket():
 
 #crear_directorio_archivo('ultimo.txt','/carpeta 3/subcarpeta 3/','Este es el contenido del archivo')
 
-copiar_archivos_carpetas('C:/Users/Douglas/Desktop/vayne.jpg','/carpeta 1/','server','bucket')
+#copiar_archivos_carpetas('C:/Users/Douglas/Desktop/vayne.jpg','/carpeta 1/','server','bucket')
 
 
 
