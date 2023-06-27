@@ -370,6 +370,8 @@ def p_c_rename(p):
         c_rename : RENAME posible_parametro_rename posible_parametro_rename posible_parametro_rename
     '''
 
+    p[0] = ['rename',p[2],p[3],p[4]]
+
 def p_posible_parametro_modify(p):
     '''
         posible_parametro_modify : parametro_path
@@ -476,10 +478,11 @@ def p_error(p):
 parser = yacc.yacc()
 #entrada = "delete -path->/\"carpeta 2\"/ -type->bucket open -type->\"bUcKet\"  -port->3000  -ip->3.144.137.114  -name->/\"Mi carpeta\"/\"archivo1.txt\"  create -name->prueba1.txt -path->/carpeta1/ -body->\"Este es el contenido del archivo 1\" -type->server"
 
-#resultado = parser.parse(entrada, lexer=lexer)
+entrada = 'MoDIFY -path->/"carpeta ejemplo"/ejemplo1/calificacion3.txt -Type->server -body->"Contenido del archivo calificacion3 carpeta ejemplo ejemplo1" modifY -path->/"carpeta ejemplo"/ejemplo1/calificacion4.txt -Type->server -body->"Contenido del archivo calificacion4 carpeta ejemplo ejemplo1" rename -path->/carpeta_calificacion1/calificacion1.txt -type->bucket -Name->"calificacion bucket 1" rename -path->/carpeta_calificacion1/calificacion2.txt -type->bucket -Name->"calificacion bucket 2" rename -path->/carpeta_calificacion1/calificacion1.txt -type->server -Name->"calificacion server 1" DELETE -TYPE->bucket -paTh->/carpeta_calificacion1/calificacion4.txt creatE -name->calificacion1.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3/ -bodY->"Contenido del archivo calificacion1 carpeta ejemplo" -type->bucket Create -name->calificacion2.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3/ -body->"Contenido del archivo calificacion2 carpeta ejemplo" -Type->bucket Create -namE->calificacion3.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo4/ -body->"Contenido del archivo calificacion3 carpeta ejemplo" -Type->bucket Create -namE->calificacion4.txt -path->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo4/ -body->"Contenido del archivo calificacion4 carpeta ejemplo" -Type->bucket copy -from->/"carpeta ejemplo"/ejemplo2 -type_from->server -type_to->server -to->/"carpeta ejemplo"/ copy -from->/"carpeta ejemplo"/ejemplo2 -to->/"carpeta ejemplo"/ejemplo1 -type_from->server -type_to->server copy -from->/"carpeta ejemplo"/ejemplo2 -to->/carpeta_calificacion1/"carpeta ejemplo"/ -type_from->server -type_to->bucket copy -from->/"carpeta ejemplo"/ejemplo2 -to->/carpeta_calificacion1/"carpeta ejemplo"/ -type_from->server -type_to->bucket copy -to->/"carpeta ejemplo"/ejemplo2 -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->server copy -to->/carpeta_calificacion1/"carpeta ejemplo"  -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->bucket Transfer -from->/carpeta_calificacion_1/"calificacion server 1.txt" -type_from->server -type_to->server -to->/"carpeta ejemplo"/ Transfer -to->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3 -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->bucket Transfer -from->/carpeta_calificacion1/"carpeta ejemplo"/ejemplo3/calificacion1.txt -to->/"carpeta ejemplo"/ -type_from->bucket -type_to->server' 
+resultado = parser.parse(entrada, lexer=lexer)
 
 
-#print("Resultado: {}".format(resultado))
+print("Resultado: {}".format(resultado))
 
-#for indice, elemento in enumerate(comandos):
-#    print(elemento)
+for indice, elemento in enumerate(comandos):
+    print(elemento)

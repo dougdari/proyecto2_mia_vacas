@@ -191,10 +191,19 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         ob_s3 = boto3.resource('s3')
                         bucket = ob_s3.Bucket(nombre_bucket_s3)
 
+                        numero_copia = 1
+
                         for obj in bucket.objects.filter(Prefix=origen):
-                            ruta_origen = obj.key
-                            ruta_destino = destino + ruta_origen
-                            bucket.copy({'Bucket': nombre_bucket_s3, 'Key': ruta_origen}, ruta_destino)
+
+                            if numero_copia != 1:
+
+                                print(obj.key)
+
+                                ruta_origen = obj.key
+                                ruta_destino = destino + ruta_origen
+                                bucket.copy({'Bucket': nombre_bucket_s3, 'Key': ruta_origen}, ruta_destino)
+                            
+                            numero_copia = numero_copia + 1
                     
                     elif tipo1 == 'Archivo': 
 
@@ -244,22 +253,24 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         if destino.endswith("/"):
                             destino = destino[:-1]
 
+                        print(origen)
+
                         def copiar_bucket_a_carpeta_local(bucket, ruta, destino):
                             objetos = objeto_s3.list_objects_v2(Bucket=bucket, Prefix=ruta)['Contents']
 
                             for objeto in objetos:
                                 ruta_objeto = objeto['Key']
                                 ruta_relativa = os.path.relpath(ruta_objeto, ruta)
-
-                                # Obtiene la ruta de destino local
                                 destino_local = os.path.join(destino, ruta_relativa)
+                                destino_local = destino_local.replace("\\", "/") 
 
-                                # Crea la carpeta de destino si no existe
+                                print(destino_local)
                                 if ruta_objeto.endswith('/'):
                                     os.makedirs(destino_local, exist_ok=True)
+                                    
                                 else:
-                                    # Descarga el archivo al destino local
                                     objeto_s3.download_file(bucket, ruta_objeto, destino_local)
+                                    
                                                                             
                         copiar_bucket_a_carpeta_local(nombre_bucket_s3,origen,destino)
                             
@@ -953,14 +964,13 @@ def copiar_archivos_directorio(origen, destino):
         output_bt = "No se encontró nada en el directorio: "+origen+"para mover a: "+destino
 
 #Copia desde la carpeta anterior, es decir que incluye la carpeta Archivos en la copia
-#copiar_archivos_carpetas("/Archivos/carpeta_tc/","/Archivos/sub_carpeta2/","bucket","bucket")
+#copiar_archivos_carpetas("/Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","bucket","bucket")
+
+
 #copiar_archivos_carpetas("/Archivos/carpeta_tc/","./Archivos/sub_carpeta2/","bucket","server")
 
-#No sube la carpeta del server a la carpeta del bucket
-#copiar_archivos_carpetas("./Archivos/carpeta_tcs/","/Archivos/sub_carpeta2/","server","bucket")
 
-#---------------
-#No sube la carpeta del server a la carpeta del bucket
+
 #Transfiere desde la carpeta anterior, es decir que incluye la carpeta Archivos en la transferencia
 #transfer_archivos_carpetas("/Archivos/carpeta_tc/","/Archivos/sub_carpeta2/","bucket","bucket")
 #transfer_archivos_carpetas("/Archivos/carpeta_tc/","./Archivos/sub_carpeta2/","bucket","server")
@@ -970,13 +980,11 @@ def copiar_archivos_directorio(origen, destino):
 
 
 
-#------------------------------------------------------------------------------------
-#No sube la carpeta
-#transfer_archivos_carpetas("./Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","server","bucket")
+
 
 
 
 #Se descarga el archivo, pero no se elimina del bucket, con lo cual es una copia y no una transferencia
-copiar_archivos_carpetas("/Archivos/sub_carpeta1/","./Archivos/","bucket","server")
+copiar_archivos_carpetas("/Archivos/","./Archivos/","bucket","server")
 
 #print(verificar_archivo_con_ruta_bucket("/Archivos/sub_carpeta2/sub_carpeta1/"))
