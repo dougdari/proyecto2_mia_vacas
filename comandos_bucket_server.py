@@ -299,6 +299,33 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                     if destino[0] == '/':
                         destino = destino[ 1:len(destino)]
 
+
+                    
+                    solo_carpeta_nombre = origen
+
+                    if solo_carpeta_nombre.endswith("/"):
+                        solo_carpeta_nombre = solo_carpeta_nombre[:-1]
+
+                    solo_carpeta_nombre = os.path.basename(solo_carpeta_nombre)
+
+                    print('Origen', origen)
+                    print('Carpeta a copiar', solo_carpeta_nombre)
+                    print('Carpeta a donde', destino)
+
+                    nueva_ruta_destino = destino
+
+                    if nueva_ruta_destino.endswith("/"):
+                        nueva_ruta_destino = nueva_ruta_destino + solo_carpeta_nombre + '/'
+                    else:
+                        nueva_ruta_destino = nueva_ruta_destino + '/' + solo_carpeta_nombre + '/'
+
+                    print('ruta Nueva carpeta', nueva_ruta_destino)
+                    objeto_s3.put_object(Bucket=nombre_bucket_s3, Key = nueva_ruta_destino) 
+
+                    destino = nueva_ruta_destino
+
+                    ############################################################################################################################################################
+
                     if(tipo1 == 'Carpeta'):
 
                         for root, dirs, files in os.walk(origen):
@@ -891,4 +918,4 @@ def copiar_archivos_directorio(origen, destino):
 #transfer_archivos_carpetas("/Archivos/sub_carpeta1/Archivo.txt","./Archivos/sub_carpeta2/","bucket","server")
 
 #No sube la carpeta
-#transfer_archivos_carpetas("./Archivos/carpeta_tcs/","/Archivos/sub_carpeta2/","server","bucket")
+copiar_archivos_carpetas("./Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","server","bucket")
