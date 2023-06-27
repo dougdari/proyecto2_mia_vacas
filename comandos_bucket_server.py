@@ -402,6 +402,8 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                                 else:  
                                     descarga_recursiva(ruta_nuevo_origen, ruta_nuevo_destino)
 
+                        copiar_carpeta(origen,destino)
+
                         shutil.rmtree(origen)
 
                     elif tipo1 == 'Archivo':
