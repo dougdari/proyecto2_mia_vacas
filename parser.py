@@ -239,7 +239,7 @@ def p_parametro_type(p):
         parametro_type : SEPARADOR TYPE FLECHA TIPO_ALMACENAMIENTO
     '''
 
-    p[0] = ['type',str(p[4]).lower()]
+    p[0] = ['type',str(p[4]).lower().replace('"', '')]
 
 def p_parametro_from(p): 
     '''
@@ -259,14 +259,14 @@ def p_parametro_type_to(p):
         parametro_type_to : SEPARADOR TYPE_TO FLECHA TIPO_ALMACENAMIENTO
     '''
     
-    p[0] = ['type_to',str(p[4]).lower()]
+    p[0] = ['type_to',str(p[4]).lower().replace('"', '')]
 
 def p_parametro_type_from(p):
     '''
         parametro_type_from : SEPARADOR TYPE_FROM FLECHA TIPO_ALMACENAMIENTO
     '''
 
-    p[0] = ['type',str(p[4]).lower()]
+    p[0] = ['type',str(p[4]).lower().replace('"', '')]
 
 def p_parametro_ip(p):
     '''
