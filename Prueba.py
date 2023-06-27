@@ -113,7 +113,8 @@ def fun_eliminar_todo():
                 rmtree(ruta)
         except Exception as e:
             print("Error "+e)
-#-----------------------------------------------------------FUNCIONES COMPLEMENTARIAS---------------------------------------------------------
+
+#-----------------------------------------------------------FUNCIONES COMPLEMENTARIAS-----  ----------------------------------------------------
 def limpiar_ruta(ruta_archivo):
     partes = ruta_archivo.split("/")
     nuevas_partes = [x for x in partes if x != '']
