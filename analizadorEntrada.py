@@ -81,8 +81,6 @@ tokens = (
     'DIRECCION_IP',
     'NUMERO_PUERTO',
     'OPEN',   
-    
-    'DIRECTORIO_CON_CARPETA_ABIERTA',
     'DIRECTORIO_CON_ARCHIVO',
     'NOMBRE_ARCHIVO',
     'NOMBRE_ARCHIVO_COMILLAS',
@@ -116,9 +114,6 @@ t_OPEN = r'(O|o)(P|p)(E|e)(N|n)'
 
 t_DIRECCION_IP = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 t_NUMERO_PUERTO = r'\b(?:[0-9]{1,4})\b'
-
-
-t_DIRECTORIO_CON_CARPETA_ABIERTA = r'[\/](([a-zA-Z0-9_-]+|\"[a-zA-Z0-9_ -]+\")[\/])*(([a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\"))'
 
 t_DIRECTORIO_CON_ARCHIVO = r'[\/](([a-zA-Z0-9_-]+|\"[a-zA-Z0-9_ -]+\")[\/])*(([a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+)|(\"[a-zA-Z0-9_ -]+\.[a-zA-Z0-9_-]+\"))'
 
@@ -233,8 +228,7 @@ def p_path_parametros(p):
 
 def p_rutas_solo_directorios(p):
     '''
-        rutas_solo_directorios : DIRECTORIO_CON_CARPETA_ABIERTA  
-                               | SOLO_DIRECTORIO 
+        rutas_solo_directorios : SOLO_DIRECTORIO 
     '''
 
     p[0] = ['directorio',str(p[1])]
