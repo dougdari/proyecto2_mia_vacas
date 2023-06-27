@@ -138,6 +138,9 @@ def verificar_archivo_con_ruta_bucket(directorio):
     if directorio[0] == '/':
         directorio = directorio[ 1:len(directorio)]
 
+    if directorio.endswith('/'):
+                directorio = directorio[:-1]
+
     if directorio.find('.') != -1:
         tipo_ruta = 'Archivo'
     else:
@@ -235,23 +238,31 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         if destino[0] == '/':
                             destino = destino[ 1:len(destino)]
 
-                        def descarga_recursiva(ruta_origen, ruta_destino):
-                            objeto_s3.download_file( nombre_bucket_s3, ruta_origen, ruta_destino)
+                        if origen.endswith("/"):
+                            origen = origen[:-1]
+                            
+                        if destino.endswith("/"):
+                            destino = destino[:-1]
 
-                        def copiar_carpeta(origen_, destino_):
-                            contenido = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen_)['Contents']
+                        def copiar_bucket_a_carpeta_local(bucket, ruta, destino):
+                            objetos = objeto_s3.list_objects_v2(Bucket=bucket, Prefix=ruta)['Contents']
 
-                            for archivo_carpeta in contenido:
-                                ruta_nuevo_origen = archivo_carpeta['Key']
-                                ruta_nuevo_destino = os.path.join(destino_, ruta_nuevo_origen)
+                            for objeto in objetos:
+                                ruta_objeto = objeto['Key']
+                                ruta_relativa = os.path.relpath(ruta_objeto, ruta)
 
-                                if ruta_nuevo_origen.endswith('/'):  
-                                    os.makedirs(ruta_nuevo_destino, exist_ok=True)
-                                else:  
-                                    descarga_recursiva(ruta_nuevo_origen, ruta_nuevo_destino)
+                                # Obtiene la ruta de destino local
+                                destino_local = os.path.join(destino, ruta_relativa)
 
-                        copiar_carpeta(origen, destino)
-
+                                # Crea la carpeta de destino si no existe
+                                if ruta_objeto.endswith('/'):
+                                    os.makedirs(destino_local, exist_ok=True)
+                                else:
+                                    # Descarga el archivo al destino local
+                                    objeto_s3.download_file(bucket, ruta_objeto, destino_local)
+                                                                            
+                        copiar_bucket_a_carpeta_local(nombre_bucket_s3,origen,destino)
+                            
                     elif tipo1 == 'Archivo':
 
                         print(destino)
@@ -482,24 +493,44 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         if destino[0] == '/':
                             destino = destino[ 1:len(destino)]
 
-                        def descarga_recursiva(ruta_origen, ruta_destino):
-                            objeto_s3.download_file( nombre_bucket_s3, ruta_origen, ruta_destino)
+                        if origen.endswith("/"):
+                            origen = origen[:-1]
+                            
+                        if destino.endswith("/"):
+                            destino = destino[:-1]
 
-                        def copiar_carpeta(origen_, destino_):
-                            contenido = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen_)['Contents']
+                        def copiar_bucket_a_carpeta_local(bucket, carpeta, destino):
+                            print('entra')
+                            objetos = objeto_s3.list_objects_v2(Bucket=bucket, Prefix=carpeta)['Contents']
 
-                            for archivo_carpeta in contenido:
-                                ruta_nuevo_origen = archivo_carpeta['Key']
-                                ruta_nuevo_destino = os.path.join(destino_, ruta_nuevo_origen)
+                            for objeto in objetos:
+                                ruta_objeto = objeto['Key']
+                                ruta_relativa = os.path.relpath(ruta_objeto, carpeta)
+                                destino_local = os.path.join(destino, ruta_relativa)
 
-                                if ruta_nuevo_origen.endswith('/'):  
-                                    os.makedirs(ruta_nuevo_destino, exist_ok=True)
-                                else:  
-                                    descarga_recursiva(ruta_nuevo_origen, ruta_nuevo_destino)
+                                if not os.path.exists(os.path.dirname(destino_local)):
+                                    os.makedirs(os.path.dirname(destino_local))
 
-                        copiar_carpeta(origen,destino)
+                                if not ruta_objeto.endswith('/'):
+                                    objeto_s3.download_file(bucket, ruta_objeto, destino_local)
 
-                        shutil.rmtree(origen)
+                                if ruta_objeto.endswith('/') and not os.path.exists(destino_local):
+                                    os.makedirs(destino_local)
+
+                                if ruta_objeto.endswith('/') and not ruta_relativa.endswith('/'):
+                                    # Copia el contenido de las subcarpetas
+                                    copiar_bucket_a_carpeta_local(bucket, ruta_objeto, destino)
+                                                    
+                        copiar_bucket_a_carpeta_local(nombre_bucket_s3,origen,destino)
+
+                        peticion = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen)
+
+                        if 'Contents' in peticion:
+                        
+                            objetos_a_eliminar = [{'Key': objeto['Key']} for objeto in peticion['Contents']]
+                            objeto_s3.delete_objects(Bucket=nombre_bucket_s3, Delete={'Objects': objetos_a_eliminar})
+                        else:                
+                            print('Algun error')
 
                     elif tipo1 == 'Archivo':
 
@@ -518,7 +549,7 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         nombre_archivo_descargado = os.path.basename(origen)
                         objeto_s3.download_file(nombre_bucket_s3, origen, destino + nombre_archivo_descargado)
 
-                          
+                        objeto_s3.delete_object(Bucket=nombre_bucket_s3, Key=origen)                          
 
                 else:
                     #reportar error---> ruta destino en el comando copiar no es valida
@@ -946,4 +977,6 @@ def copiar_archivos_directorio(origen, destino):
 
 
 #Se descarga el archivo, pero no se elimina del bucket, con lo cual es una copia y no una transferencia
-transfer_archivos_carpetas("/Archivos/sub_carpeta1/Archivo.txt","./Archivos/sub_carpeta2/","bucket","server")
+copiar_archivos_carpetas("/Archivos/sub_carpeta1/","./Archivos/","bucket","server")
+
+#print(verificar_archivo_con_ruta_bucket("/Archivos/sub_carpeta2/sub_carpeta1/"))
