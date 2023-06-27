@@ -474,13 +474,12 @@ def p_error(p):
 
 
 parser = yacc.yacc()
- 
-entrada = "delete -path->/\"carpeta 2\"/ -type->bucket open -type->\"bUcKet\"  -port->3000  -ip->3.144.137.114  -name->/\"Mi carpeta\"/\"archivo1.txt\"  create -name->prueba1.txt -path->/carpeta1/ -body->\"Este es el contenido del archivo 1\" -type->server"
+#entrada = "delete -path->/\"carpeta 2\"/ -type->bucket open -type->\"bUcKet\"  -port->3000  -ip->3.144.137.114  -name->/\"Mi carpeta\"/\"archivo1.txt\"  create -name->prueba1.txt -path->/carpeta1/ -body->\"Este es el contenido del archivo 1\" -type->server"
 
-resultado = parser.parse(entrada, lexer=lexer)
+#resultado = parser.parse(entrada, lexer=lexer)
 
 
 #print("Resultado: {}".format(resultado))
 
-for indice, elemento in enumerate(comandos):
-    print(elemento)
+#for indice, elemento in enumerate(comandos):
+#    print(elemento)

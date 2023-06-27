@@ -934,8 +934,16 @@ def copiar_archivos_directorio(origen, destino):
 #transfer_archivos_carpetas("/Archivos/carpeta_tc/","/Archivos/sub_carpeta2/","bucket","bucket")
 #transfer_archivos_carpetas("/Archivos/carpeta_tc/","./Archivos/sub_carpeta2/","bucket","server")
 
-#Se descarga el archivo, pero no se elimina del bucket, con lo cual es una copia y no una transferencia
-#transfer_archivos_carpetas("/Archivos/sub_carpeta1/Archivo.txt","./Archivos/sub_carpeta2/","bucket","server")
 
+
+
+
+
+#------------------------------------------------------------------------------------
 #No sube la carpeta
-transfer_archivos_carpetas("./Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","server","bucket")
+#transfer_archivos_carpetas("./Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","server","bucket")
+
+
+
+#Se descarga el archivo, pero no se elimina del bucket, con lo cual es una copia y no una transferencia
+transfer_archivos_carpetas("/Archivos/sub_carpeta1/Archivo.txt","./Archivos/sub_carpeta2/","bucket","server")
