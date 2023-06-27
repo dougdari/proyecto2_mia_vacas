@@ -144,7 +144,7 @@ def p_inicio(p):
         inicio : l_comando
     '''
 
-    print(comandos)
+    #print(comandos)
 
 def p_l_comando(p):
 
@@ -153,7 +153,10 @@ def p_l_comando(p):
             | comando
     '''
 
-    #print(p.slice[1].type)
+    if len(p) == 3:
+        comandos.append(p[2])
+    else:
+        comandos.append(p[1]) 
 
 def p_comando(p): 
     '''
@@ -175,26 +178,40 @@ def p_parametro_name(p):
     '''
         parametro_name : SEPARADOR NAME FLECHA name_parametros
     '''
+    
+    p[0] = ['name', p[4]]
 
 def p_name_parametos(p):
     '''
         name_parametros : NOMBRE_ARCHIVO
                         | NOMBRE_ARCHIVO_COMILLAS
+                        | DIRECTORIO_CON_ARCHIVO
                         | CADENA                        
     '''
 
-    print(p.slice[1].type)
+    if p.slice[1].type == 'NOMBRE_ARCHIVO':
+        p[0] = ['nombre_archivo', p[1]]
+    elif p.slice[1].type == 'NOMBRE_ARCHIVO_COMILLAS':
+        p[0] = ['nombre_archivo', p[1]]
+    elif p.slice[1].type == 'DIRECTORIO_CON_ARCHIVO':
+        p[0] = ['directorio_con_archivo', p[1]]
+    else:
+        p[0] = ['cadena', p[1]]
+
+    p[0] = p[1]
 
 def p_parametro_body(p):
     '''
         parametro_body : SEPARADOR BODY FLECHA CADENA
     '''
-    print(str(p[4]))
+    p[0] = ['body', p[4]]
 
 def p_parametro_path(p):
     '''
         parametro_path : SEPARADOR PATH FLECHA path_parametros
     '''   
+
+    p[0] = ['path', p[4]]
 
 def p_path_parametros(p):
     '''
@@ -203,55 +220,67 @@ def p_path_parametros(p):
     '''
 
     if p.slice[1].type != 'rutas_solo_directorios':
-            print(p.slice[1].type)
+        p[0] = ['directorio_con_archivo',str(p[1])]
+    else:
+        p[0] = p[1]
    
+    p[0] = p[1]
 
 def p_rutas_solo_directorios(p):
     '''
         rutas_solo_directorios : SOLO_DIRECTORIO 
     '''
 
-    print(p.slice[1].type)
+    p[0] = ['directorio',str(p[1])]
+    p[0] = p[1]
 
 def p_parametro_type(p):
     '''
         parametro_type : SEPARADOR TYPE FLECHA TIPO_ALMACENAMIENTO
     '''
-    print(p[4])
+
+    p[0] = ['type',str(p[4]).lower()]
 
 def p_parametro_from(p): 
     '''
         parametro_from : SEPARADOR FROM FLECHA path_parametros
     '''
+    p[0] = ['from',p[4]]
 
 def p_parametro_to(p):
     '''
         parametro_to : SEPARADOR TO FLECHA rutas_solo_directorios
     '''
 
+    p[0] = ['to', p[4]]
+
 def p_parametro_type_to(p):
     '''
         parametro_type_to : SEPARADOR TYPE_TO FLECHA TIPO_ALMACENAMIENTO
     '''
     
-    print(p[4])
+    p[0] = ['type_to',str(p[4]).lower()]
 
 def p_parametro_type_from(p):
     '''
         parametro_type_from : SEPARADOR TYPE_FROM FLECHA TIPO_ALMACENAMIENTO
     '''
 
-    print(p[4])
+    p[0] = ['type',str(p[4]).lower()]
 
 def p_parametro_ip(p):
     '''
         parametro_ip : SEPARADOR IP FLECHA DIRECCION_IP
     '''
 
+    p[0] = ['ip',str(p[4])]
+
 def p_parametro_port(p):
     '''
         parametro_port : SEPARADOR PORT FLECHA NUMERO_PUERTO
     '''
+
+    p[0] = ['port',str(p[4])]
 
 def p_posible_parametro_create(p):
     '''
@@ -268,6 +297,8 @@ def p_c_create(p):
         c_create : CREATE posible_parametro_create posible_parametro_create posible_parametro_create posible_parametro_create
     '''
 
+    p[0] = ['create',p[2],p[3],p[4],p[5]]
+
 def p_posible_parametro_delete(p):
     '''
         posible_parametro_delete : parametro_path
@@ -275,11 +306,21 @@ def p_posible_parametro_delete(p):
                                  | parametro_type
     '''
 
+    p[0] = p[1]
+
 def p_c_delete(p):
     '''
         c_delete : DELETE posible_parametro_delete posible_parametro_delete posible_parametro_delete
                  | DELETE posible_parametro_delete posible_parametro_delete
     '''
+
+    
+    
+
+    if len(p) == 5:
+        p[0] = ['delete',p[2],p[3],p[4]]
+    elif len(p) == 4:
+        p[0] = ['delete',p[2],p[3]]
 
 def p_posible_parametro_copy(p):
     '''
@@ -289,10 +330,14 @@ def p_posible_parametro_copy(p):
                                | parametro_type_from
     '''
 
+    p[0] = p[1]
+
 def p_c_copy(p):
     '''
         c_copy : COPY posible_parametro_copy posible_parametro_copy posible_parametro_copy posible_parametro_copy
     '''
+
+    p[0] = ['copy',p[2],p[3],p[4],p[5]]
 
 def p_posible_parametro_transfer(p):
     '''
@@ -302,10 +347,14 @@ def p_posible_parametro_transfer(p):
                                    | parametro_type_from
     '''
 
+    p[0] = p[1]
+
 def p_c_transfer(p):
     '''
         c_transfer : TRANSFER posible_parametro_transfer posible_parametro_transfer posible_parametro_transfer posible_parametro_transfer
     '''
+
+    p[0] = ['transfer',p[2],p[3],p[4],p[5]]
 
 def p_posible_parametro_rename(p):
     '''
@@ -313,6 +362,8 @@ def p_posible_parametro_rename(p):
                                  | parametro_name
                                  | parametro_type
     '''
+
+    p[0] = p[1]
 
 def p_c_rename(p):
     '''
@@ -326,10 +377,14 @@ def p_posible_parametro_modify(p):
                                  | parametro_type
     '''
 
+    p[0] = p[1]
+
 def p_c_modify(p):
     '''
         c_modify : MODIFY posible_parametro_modify posible_parametro_modify posible_parametro_modify
     '''
+
+    p[0] = ['modify',p[2],p[3],p[4]]
 
 def p_posible_parametro_backup(p):
     '''
@@ -340,12 +395,22 @@ def p_posible_parametro_backup(p):
                                  | parametro_name
     '''
 
+    p[0] = p[1]
+
 def p_c_backup(p):
     '''
         c_backup : BACKUP posible_parametro_backup posible_parametro_backup posible_parametro_backup posible_parametro_backup posible_parametro_backup
                  | BACKUP posible_parametro_backup posible_parametro_backup posible_parametro_backup posible_parametro_backup
                  | BACKUP posible_parametro_backup posible_parametro_backup posible_parametro_backup
     '''
+
+    if len(p) == 7:
+        p[0] = ['backup',p[2],p[3],p[4],p[5],p[6]]
+    elif len(p) == 6:
+        p[0] = ['backup',p[2],p[3].p[4],p[5]]
+    else:
+        p[0] = ['backup',p[2],p[3],p[4]]
+
 
 def p_posible_parametro_recovery(p):
     '''
@@ -356,6 +421,8 @@ def p_posible_parametro_recovery(p):
                                    | parametro_name
     '''
 
+    p[0] = p[1]
+
 def p_c_recovery(p):
     '''
         c_recovery : RECOVERY posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery
@@ -363,10 +430,19 @@ def p_c_recovery(p):
                    | RECOVERY posible_parametro_recovery posible_parametro_recovery posible_parametro_recovery
     '''
 
+    if len(p) == 7:
+        p[0] = ['recovery',p[2],p[3],p[4],p[5],p[6]]
+    elif len(p) == 6:
+        p[0] = ['recovery',p[2],p[3].p[4],p[5]]
+    else:
+        p[0] = ['recovery',p[2],p[3],p[4]]
+
 def p_c_delete_all(p):
     '''
         c_delete_all : DELETE_ALL parametro_type 
     '''
+
+    p[0] = ['delete_all',p[2]]
 
 def p_posible_parametro_open(p):
     '''
@@ -376,6 +452,8 @@ def p_posible_parametro_open(p):
                                | parametro_name
     '''
 
+    p[0] = p[1]
+
 def p_c_open(p):
     '''
         c_open : OPEN posible_parametro_open posible_parametro_open posible_parametro_open posible_parametro_open
@@ -383,6 +461,12 @@ def p_c_open(p):
                | OPEN posible_parametro_open posible_parametro_open
     '''
 
+    if len(p) == 6:
+        p[0] = ['open',p[2],p[3],p[4],p[5]]
+    elif len(p) == 5:
+        p[0] = ['open',p[2],p[3],p[4]]
+    else:
+        p[0] = ['open',p[2],p[3]]
 
 def p_error(p):
     print("Error sintactico")
@@ -391,8 +475,12 @@ def p_error(p):
 
 parser = yacc.yacc()
  
-entrada = "open -type->bucket  -port->3000  -ip->3.144.137.114        -name->\"archivo1.txt\""
+entrada = "delete -path->/\"carpeta 2\"/ -type->bucket open -type->\"bUcKet\"  -port->3000  -ip->3.144.137.114  -name->/\"Mi carpeta\"/\"archivo1.txt\"  create -name->prueba1.txt -path->/carpeta1/ -body->\"Este es el contenido del archivo 1\" -type->server"
 
 resultado = parser.parse(entrada, lexer=lexer)
 
-print("Resultado: {}".format(resultado))
+
+#print("Resultado: {}".format(resultado))
+
+for indice, elemento in enumerate(comandos):
+    print(elemento)
