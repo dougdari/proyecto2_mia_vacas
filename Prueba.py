@@ -6,46 +6,6 @@ import regex as re
 
 dir_origen = "./Archivos"
 #------------------------------------------------------------FUNCIONES DE COMANDOS---------------------------------------------------------
-def fun_crear(nombre_archivo,contenido_archivo,ruta_archivo,):
-    #CODIGO EN CASO DE QUE SE EJECUTE EN SERVIDOR
-    ruta_archivo_limpia = limpiar_ruta(ruta_archivo)
-    #Se crean las carpetas necesarias
-    crear_carpeta(ruta_archivo_limpia)
-    #Creacion de archivo
-    if os.path.exists(ruta_archivo_limpia+nombre_archivo):
-        nombre_archivo = nombre_archivo+"(1)"
-    f = open(ruta_archivo_limpia+nombre_archivo,"x")
-    f.write(contenido_archivo)
-    f.close()
-
-def fun_eliminar(ruta_archivo,nombre_archivo):
-    #CODIGO EN CASO DE QUE SE EJECUTE EN SERVIDOR
-    ruta_archivo_limpia = limpiar_ruta(ruta_archivo)
-    ruta_eliminar = ruta_archivo_limpia+nombre_archivo
-    if os.path.exists(ruta_eliminar):
-        if os.path.isfile(ruta_eliminar):
-            os.remove(ruta_eliminar)
-        else:
-            rmtree(ruta_eliminar)
-
-def fun_copiar(ruta_origen,ruta_destino,tipo_destino):
-    tipo = tipo_destino.lower()
-    ruta_origen_limpia = limpiar_ruta(ruta_origen)
-    ruta_destino_limpia = limpiar_ruta(ruta_destino)
-    if tipo == "server":
-        if os.path.exists(ruta_origen_limpia) and os.path.exists(ruta_destino_limpia):
-            #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
-            if os.path.isfile(ruta_origen_limpia):
-                #Se obiene el nombre del archivo
-                partes = ruta_origen_limpia.split("/")
-                nueva_partes = [x for x in partes if x != '']
-                for x in nueva_partes:
-                    if re.search(".*\.txt",x):
-                        nombre_archivo = x
-                        break
-                shutil.copyfile(ruta_origen_limpia,ruta_destino_limpia+nombre_archivo)
-            else:
-                shutil.copytree(ruta_origen_limpia,ruta_destino_limpia)
 
 def fun_transferir(ruta_origen,ruta_destino,tipo_destino):
     tipo = tipo_destino.lower()
@@ -115,27 +75,9 @@ def fun_eliminar_todo():
             print("Error "+e)
 
 #-----------------------------------------------------------FUNCIONES COMPLEMENTARIAS-----  ----------------------------------------------------
-def limpiar_ruta(ruta_archivo):
-    partes = ruta_archivo.split("/")
-    nuevas_partes = [x for x in partes if x != '']
-    ruta_limpia = dir_origen+"/"
-    for x in nuevas_partes:
-        if "\"" in x:
-            x = x.replace('\"','')
-        if not re.search(".*\.txt",x):
-            ruta_limpia = ruta_limpia+x+"/"
-        else:
-            ruta_limpia = ruta_limpia+x
-    return ruta_limpia
 
-def crear_carpeta(ruta):
-    partes = ruta.split("/")
-    nueva_partes = [x for x in partes if x != '']
-    rta = ""
-    for x in nueva_partes:
-        rta=rta+x+"/"
-        if not os.path.exists(rta) and not re.search(".*\.txt",x):
-            os.makedirs(rta)
+
+
 
 #fun_transferir("/carpeta1","/carpeta2","server")
 #fun_crear("archivo_n.txt","contenido_archivo","/carpeta1")

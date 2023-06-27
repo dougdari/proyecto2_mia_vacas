@@ -1,28 +1,44 @@
 import os
 import shutil
 import boto3
+import regex as re
+from shutil import rmtree
+import shutil
 
 nombre_bucket_s3 = 'proyecto-2-mia'
-
+dir_origen = "./Archivos"
 objeto_s3 = boto3.client('s3')
 session = boto3.Session()
 s3_resource = session.resource('s3')
 
-def crear_directorio_archivo(nombre,destino,contenido):
+def crear_directorio_archivo(nombre,destino,contenido,tipo):
+    tipo_accion = tipo.lower()
+    if tipo_accion == "bucket":
+        destino = "/Archivos"+destino
+        destino = destino.replace('"','')
+        directorios = destino.split('/')
+        ruta_directorio = ''
 
-    destino = destino.replace('"','')
-    directorios = destino.split('/')
-    ruta_directorio = ''
+        for directorio in directorios:
+            if directorio:
+                ruta_directorio += directorio + '/'
+                objeto_s3.put_object(Bucket=nombre_bucket_s3, Key=ruta_directorio)
 
-    for directorio in directorios:
-        if directorio:
-            ruta_directorio += directorio + '/'
-            objeto_s3.put_object(Bucket=nombre_bucket_s3, Key=ruta_directorio)
+        ruta_archivo = ruta_directorio + nombre
+        objeto_s3.put_object(Body=contenido, Bucket=nombre_bucket_s3, Key=ruta_archivo)
 
-    ruta_archivo = ruta_directorio + nombre
-    objeto_s3.put_object(Body=contenido, Bucket=nombre_bucket_s3, Key=ruta_archivo)
-
-    print("nuevo archivo creado ",nombre)
+        print("nuevo archivo creado ",nombre)
+    else:
+        #CODIGO EN CASO DE QUE SE EJECUTE EN SERVIDOR
+        ruta_archivo_limpia = limpiar_ruta(destino)
+        #Se crean las carpetas necesarias
+        crear_carpeta(ruta_archivo_limpia)
+        #Creacion de archivo
+        if os.path.exists(ruta_archivo_limpia+nombre):
+            nombre = nombre+"(1)"
+        f = open(ruta_archivo_limpia+nombre,"x")
+        f.write(contenido)
+        f.close()
 
 def verificar_directorio(directorio):
 
@@ -55,41 +71,52 @@ def verificar_archivo_dentro_directorio(archivo, directorio):
 
     return encontrado        
 
-def eliminar_direcotrio_archivo(nombre,origen):
+def eliminar_direcotrio_archivo(nombre,origen,tipo):
+    tipo_accion = tipo.lower()
+    if tipo_accion == "bucket":
+        origen = "Archivos"+origen
+        origen = origen.replace('"','')
+        if origen[0] == '/':
+            origen = origen[ 1:len(origen)]
 
-    origen = origen.replace('"','')
-    if origen[0] == '/':
-        origen = origen[ 1:len(origen)]
+        if verificar_directorio(origen):
 
-    if verificar_directorio(origen):
+            if nombre == "":
+                print('proceder a eliminar toda la carpeta')
 
-        if nombre == "":
-            print('proceder a eliminar toda la carpeta')
+                peticion = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen)
 
-            peticion = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen)
+                # Verificar si la carpeta está vacía
+                if 'Contents' in peticion:
+                    # Recorrer y eliminar los objetos dentro de la carpeta
+                    objetos_a_eliminar = [{'Key': objeto['Key']} for objeto in peticion['Contents']]
+                    objeto_s3.delete_objects(Bucket=nombre_bucket_s3, Delete={'Objects': objetos_a_eliminar})
+                else:                
+                    print('Algun error')
+                    #### reportar error
 
-            # Verificar si la carpeta está vacía
-            if 'Contents' in peticion:
-                # Recorrer y eliminar los objetos dentro de la carpeta
-                objetos_a_eliminar = [{'Key': objeto['Key']} for objeto in peticion['Contents']]
-                objeto_s3.delete_objects(Bucket=nombre_bucket_s3, Delete={'Objects': objetos_a_eliminar})
-            else:                
-                print('Algun error')
-                #### reportar error
-
-        else:
-            if verificar_archivo_dentro_directorio(nombre,origen):
-                print("proceder a eliminar solo el archivo") 
-
-                print(str(origen)+str(nombre))
-                rutan_nombre = str(origen)+str(nombre)
-                objeto_s3.delete_object(Bucket=nombre_bucket_s3, Key=rutan_nombre)
             else:
-                print("El archivo no existe")
-                ####### reportar error
+                if verificar_archivo_dentro_directorio(nombre,origen):
+                    print("proceder a eliminar solo el archivo") 
+
+                    print(str(origen)+str(nombre))
+                    rutan_nombre = str(origen)+str(nombre)
+                    objeto_s3.delete_object(Bucket=nombre_bucket_s3, Key=rutan_nombre)
+                else:
+                    print("El archivo no existe")
+                    ####### reportar error
+        else:
+            print("La ruta no existe")
+            ####### reportar error
     else:
-        print("La ruta no existe")
-        ####### reportar error
+        #CODIGO EN CASO DE QUE SE EJECUTE EN SERVIDOR
+        ruta_archivo_limpia = limpiar_ruta(origen)
+        ruta_eliminar = ruta_archivo_limpia+nombre
+        if os.path.exists(ruta_eliminar):
+            if os.path.isfile(ruta_eliminar):
+                os.remove(ruta_eliminar)
+            else:
+                rmtree(ruta_eliminar)
     
 def verificar_archivo_carpeta(directorio):
 
@@ -291,8 +318,19 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
 
                 
                 if tipo1 != '':
-                    print('copiar')
-                    ##//llamar ala funcioncion solo copia local------------------------------------------> sustituir aca
+                    if os.path.exists(origen) and os.path.exists(destino):
+                        #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
+                        if os.path.isfile(origen):
+                            #Se obiene el nombre del archivo
+                            partes = origen.split("/")
+                            nueva_partes = [x for x in partes if x != '']
+                            for x in nueva_partes:
+                                if re.search(".*\.txt",x):
+                                    nombre_archivo = x
+                                    break
+                            shutil.copyfile(origen,destino+nombre_archivo)
+                        else:
+                            shutil.copytree(origen,destino)
                 else:
                     #reportar error---> ruta destino en el comando copiar no es valida
                     print('la ruta origen no es valida')
@@ -615,6 +653,12 @@ def crear_recovery(tipo_to,tipo_from,ip,port,name_copy):
         copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to)
 
 def open_archivo(tipo,ip,port,name_file):
+    if name_file.endswith('/'):
+        name_file = name_file[:-1]
+
+    if name_file.startswith('/'):
+        name_file = name_file[1:]
+
     if tipo == "bucket":
         try:
             s3_object = s3_resource.Object(
@@ -637,70 +681,35 @@ def open_archivo(tipo,ip,port,name_file):
         nombre = "./"+name_file
         f = open(nombre)
         print(f.read())
-#open_archivo("server","","","Archivos/sub_carpeta1/Archivo.txt")
-#modificar_archivo_bucket('/en_la_raiz.txt','Nuevo contenido 7777')
-#crear_backup('server','bucket',"","","copi1_b")
-#crear_recovery('bucket','server',"","","copi1_b")
-#eliminar_todo_el_contenido_bucket()
 
+def limpiar_ruta(ruta_archivo):
+    partes = ruta_archivo.split("/")
+    nuevas_partes = [x for x in partes if x != '']
+    ruta_limpia = dir_origen+"/"
+    for x in nuevas_partes:
+        if "\"" in x:
+            x = x.replace('\"','')
+        if not re.search(".*\.txt",x):
+            ruta_limpia = ruta_limpia+x+"/"
+        else:
+            ruta_limpia = ruta_limpia+x
+    return ruta_limpia
 
+def crear_carpeta(ruta):
+    partes = ruta.split("/")
+    nueva_partes = [x for x in partes if x != '']
+    rta = ""
+    for x in nueva_partes:
+        rta=rta+x+"/"
+        if not os.path.exists(rta) and not re.search(".*\.txt",x):
+            os.makedirs(rta)
 
+#PRUEBAS DE COMANDOS
+#crear_directorio_archivo("Archivo.txt","/sub_carpeta1/","Contenido del Archivo en server","server")
+#crear_directorio_archivo("Archivo.txt","/sub_carpeta2/","Contenido del Archivo en bucket","bucket")
 
+#eliminar_direcotrio_archivo("","/sub_carpeta1/","server")
+#eliminar_direcotrio_archivo("","/sub_carpeta2/","bucket")
 
-
-
-
-
-
-
-
-#print(verificar_archivo_con_ruta_bucket('/"carpeta 2"/destinoArchivo/otro_archivo.txt'))
-#copiar_archivos_carpetas('/"carpeta 2"/destinoArchivo/otro_archivo.txt','/"carpeta 2"/destinoArchivo/otro_archivo.txt','server','server')
-#copiar_archivos_carpetas('C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/Texto 1.txt','C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/','bucket','bucket')
-
-#crear_directorio_archivo('otro_archivo1.txt','/"carpeta 2"/destinoArchivo/','Este es el contenido del archivo')
-#print(verificar_archivo_dentro_directorio('otro_archivo.txt','/"carpeta 2"/destinoArchivo/'))
-#print(verificar_directorio('/"carpeta 2"/destinoArchivo/'))
-
-#eliminar_direcotrio_archivo('','/"carpeta 3"')
-
-#copiar_archivos_carpetas('/carpeta 2/destinoArchivo/','C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/','bucket','server')
-
-#eliminar_direcotrio_archivo_bucket('','carpeta 2/')
-#crear_directorio_archivo('otro.txt','/"carpeta 6"/','Este es el contenido del archivo')
-
-
-#eliminar_direcotrio_archivo_bucket('','carpeta 2/')
-#transfer_archivos_carpetas('/"carpeta 4"/','/"carpeta 1"/','bucket','bucket')
-#cambiar_nombre_archivo_carpeta_bucket('\"carpeta 77 nueva\"','/\"carpeta 5\"/')
-
-
-
-
-
-#print(verificar_archivo_con_ruta_bucket('/"carpeta 2"/destinoArchivo/otro_archivo.txt'))
-#copiar_archivos_carpetas('/"carpeta 2"/destinoArchivo/otro_archivo.txt','/"carpeta 2"/destinoArchivo/otro_archivo.txt','server','server')
-#copiar_archivos_carpetas('C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/Texto 1.txt','C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/','bucket','bucket')
-
-#crear_directorio_archivo('otro_archivo1.txt','/"carpeta 2"/destinoArchivo/','Este es el contenido del archivo')
-#print(verificar_archivo_dentro_directorio('otro_archivo.txt','/"carpeta 2"/destinoArchivo/'))
-#print(verificar_directorio('/"carpeta 2"/destinoArchivo/'))
-
-#eliminar_direcotrio_archivo('','/"carpeta 3"')
-
-#copiar_archivos_carpetas('/carpeta 2/destinoArchivo/','C:/Users/Douglas/Desktop/pruebaCarpeta/carpeta1/','bucket','server')
-
-
-#crear_directorio_archivo('ultimo.txt','/carpeta 3/subcarpeta 3/','Este es el contenido del archivo')
-
-#copiar_archivos_carpetas('C:/Users/Douglas/Desktop/vayne.jpg','/carpeta 1/','server','bucket')
-
-
-
-
-
-
-
-
-
-
+#copiar_archivos_carpetas("./Archivos/sub_carpeta1/Archivo.txt","./Archivos/sub_carpeta2/","server","server")
+#copiar_archivos_carpetas("./Archivos/sub_carpeta1/Archivo.txt","./Archivos/sub_carpeta2/","bucket","bucket")
