@@ -25,8 +25,8 @@ Rule 19    parametro_body -> SEPARADOR BODY FLECHA CADENA
 Rule 20    parametro_path -> SEPARADOR PATH FLECHA path_parametros
 Rule 21    path_parametros -> DIRECTORIO_CON_ARCHIVO
 Rule 22    path_parametros -> rutas_solo_directorios
-Rule 23    rutas_solo_directorios -> SOLO_DIRECTORIO
-Rule 24    rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA
+Rule 23    rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA
+Rule 24    rutas_solo_directorios -> SOLO_DIRECTORIO
 Rule 25    parametro_type -> SEPARADOR TYPE FLECHA TIPO_ALMACENAMIENTO
 Rule 26    parametro_from -> SEPARADOR FROM FLECHA path_parametros
 Rule 27    parametro_to -> SEPARADOR TO FLECHA rutas_solo_directorios
@@ -98,7 +98,7 @@ DELETE               : 40 41
 DELETE_ALL           : 76
 DIRECCION_IP         : 30
 DIRECTORIO_CON_ARCHIVO : 17 21
-DIRECTORIO_CON_CARPETA_ABIERTA : 24
+DIRECTORIO_CON_CARPETA_ABIERTA : 23
 FLECHA               : 14 19 20 25 26 27 28 29 30 31
 FROM                 : 26
 IP                   : 30
@@ -113,7 +113,7 @@ PORT                 : 31
 RECOVERY             : 73 74 75
 RENAME               : 55
 SEPARADOR            : 14 19 20 25 26 27 28 29 30 31
-SOLO_DIRECTORIO      : 23
+SOLO_DIRECTORIO      : 24
 TIPO_ALMACENAMIENTO  : 25 28 29
 TO                   : 27
 TRANSFER             : 51
@@ -1910,12 +1910,12 @@ state 98
     (20) parametro_path -> SEPARADOR PATH FLECHA . path_parametros
     (21) path_parametros -> . DIRECTORIO_CON_ARCHIVO
     (22) path_parametros -> . rutas_solo_directorios
-    (23) rutas_solo_directorios -> . SOLO_DIRECTORIO
-    (24) rutas_solo_directorios -> . DIRECTORIO_CON_CARPETA_ABIERTA
+    (23) rutas_solo_directorios -> . DIRECTORIO_CON_CARPETA_ABIERTA
+    (24) rutas_solo_directorios -> . SOLO_DIRECTORIO
 
     DIRECTORIO_CON_ARCHIVO shift and go to state 122
-    SOLO_DIRECTORIO shift and go to state 124
-    DIRECTORIO_CON_CARPETA_ABIERTA shift and go to state 125
+    DIRECTORIO_CON_CARPETA_ABIERTA shift and go to state 124
+    SOLO_DIRECTORIO shift and go to state 125
 
     path_parametros                shift and go to state 121
     rutas_solo_directorios         shift and go to state 123
@@ -1976,12 +1976,12 @@ state 103
     (26) parametro_from -> SEPARADOR FROM FLECHA . path_parametros
     (21) path_parametros -> . DIRECTORIO_CON_ARCHIVO
     (22) path_parametros -> . rutas_solo_directorios
-    (23) rutas_solo_directorios -> . SOLO_DIRECTORIO
-    (24) rutas_solo_directorios -> . DIRECTORIO_CON_CARPETA_ABIERTA
+    (23) rutas_solo_directorios -> . DIRECTORIO_CON_CARPETA_ABIERTA
+    (24) rutas_solo_directorios -> . SOLO_DIRECTORIO
 
     DIRECTORIO_CON_ARCHIVO shift and go to state 122
-    SOLO_DIRECTORIO shift and go to state 124
-    DIRECTORIO_CON_CARPETA_ABIERTA shift and go to state 125
+    DIRECTORIO_CON_CARPETA_ABIERTA shift and go to state 124
+    SOLO_DIRECTORIO shift and go to state 125
 
     path_parametros                shift and go to state 129
     rutas_solo_directorios         shift and go to state 123
@@ -1989,11 +1989,11 @@ state 103
 state 104
 
     (27) parametro_to -> SEPARADOR TO FLECHA . rutas_solo_directorios
-    (23) rutas_solo_directorios -> . SOLO_DIRECTORIO
-    (24) rutas_solo_directorios -> . DIRECTORIO_CON_CARPETA_ABIERTA
+    (23) rutas_solo_directorios -> . DIRECTORIO_CON_CARPETA_ABIERTA
+    (24) rutas_solo_directorios -> . SOLO_DIRECTORIO
 
-    SOLO_DIRECTORIO shift and go to state 124
-    DIRECTORIO_CON_CARPETA_ABIERTA shift and go to state 125
+    DIRECTORIO_CON_CARPETA_ABIERTA shift and go to state 124
+    SOLO_DIRECTORIO shift and go to state 125
 
     rutas_solo_directorios         shift and go to state 130
 
@@ -2346,38 +2346,38 @@ state 123
 
 state 124
 
-    (23) rutas_solo_directorios -> SOLO_DIRECTORIO .
+    (23) rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .
 
-    SEPARADOR       reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    CREATE          reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    DELETE          reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    COPY            reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    TRANSFER        reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    RENAME          reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    MODIFY          reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    BACKUP          reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    RECOVERY        reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    DELETE_ALL      reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    OPEN            reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
-    $end            reduce using rule 23 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    SEPARADOR       reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    CREATE          reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    DELETE          reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    COPY            reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    TRANSFER        reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    RENAME          reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    MODIFY          reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    BACKUP          reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    RECOVERY        reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    DELETE_ALL      reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    OPEN            reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    $end            reduce using rule 23 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
 
 
 state 125
 
-    (24) rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .
+    (24) rutas_solo_directorios -> SOLO_DIRECTORIO .
 
-    SEPARADOR       reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    CREATE          reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    DELETE          reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    COPY            reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    TRANSFER        reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    RENAME          reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    MODIFY          reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    BACKUP          reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    RECOVERY        reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    DELETE_ALL      reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    OPEN            reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
-    $end            reduce using rule 24 (rutas_solo_directorios -> DIRECTORIO_CON_CARPETA_ABIERTA .)
+    SEPARADOR       reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    CREATE          reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    DELETE          reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    COPY            reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    TRANSFER        reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    RENAME          reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    MODIFY          reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    BACKUP          reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    RECOVERY        reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    DELETE_ALL      reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    OPEN            reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
+    $end            reduce using rule 24 (rutas_solo_directorios -> SOLO_DIRECTORIO .)
 
 
 state 126
