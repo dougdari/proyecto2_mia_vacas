@@ -4,6 +4,8 @@ import boto3
 import regex as re
 from shutil import rmtree
 import shutil
+import json
+
 
 nombre_bucket_s3 = 'proyecto-2-mia'
 dir_origen = "./Archivos"
@@ -1041,6 +1043,9 @@ def json_backup_bucket(origen,nombre):
 
     json_backup['Raiz'] = json_backup.pop('Carpeta')
     json_backup['Raiz'] = nombre
+
+    with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
+        json.dump(json_backup, archivo, indent=4)
     
     return json_backup
 
@@ -1085,6 +1090,9 @@ def json_backup_local(origen,nombre):
     json_backup['Raiz'] = json_backup.pop('Carpeta')
     json_backup['Raiz'] = nombre
     
+    with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
+        json.dump(json_backup, archivo, indent=4)
+
     return json_backup
 
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
