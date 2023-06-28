@@ -967,7 +967,7 @@ def copiar_archivos_directorio(origen, destino):
 #copiar_archivos_carpetas("/Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","bucket","bucket")
 
 
-#copiar_archivos_carpetas("/Archivos/carpeta_tc/","./Archivos/sub_carpeta2/","bucket","server")
+#copiar_archivos_carpetas("/Archivos/carpeta_calificacion1/","/Archivos/carpeta prueba/","bucket","bucket")
 
 
 
@@ -985,6 +985,9 @@ def copiar_archivos_directorio(origen, destino):
 
 
 #Se descarga el archivo, pero no se elimina del bucket, con lo cual es una copia y no una transferencia
-copiar_archivos_carpetas("/Archivos/","./Archivos/","bucket","server")
+#copiar_archivos_carpetas("/Archivos/","./Archivos/","bucket","server")
 
 #print(verificar_archivo_con_ruta_bucket("/Archivos/sub_carpeta2/sub_carpeta1/"))
+
+
+cambiar_nombre_archivo_carpeta_bucket('regresar','/Archivos/Nuevo nombre/','bucket')
