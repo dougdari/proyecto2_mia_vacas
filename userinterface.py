@@ -5,6 +5,8 @@ import gestor
 
 app = Flask(__name__)
 
+app.run(host='54.234.176.196', port=5000)
+
 @app.route('/s', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -16,6 +18,9 @@ def index():
 
 @app.route('/', methods=['GET', 'POST'])
 def app_view():
+
+    
+
     if request.method == 'POST':
         #Lecutra comando individual
         #comando_env = request.form.get('comando_escrito')
