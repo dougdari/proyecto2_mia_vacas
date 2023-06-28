@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 "Contenido del archivo calificacion3 carpeta_calificacion1 en el bucket"
+=======
+"Contenido del archivo calificacion3 carpeta_calificacion1"
+>>>>>>> e815099ea736564f6d4da957cddfbd7a5a1b3f58

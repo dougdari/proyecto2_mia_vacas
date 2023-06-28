@@ -14,7 +14,6 @@ s3_resource = session.resource('s3')
 def crear_directorio_archivo(nombre,destino,contenido,tipo):
     tipo_accion = tipo.lower()
     if tipo_accion == "bucket":
-        destino = "/Archivos"+destino
         destino = destino.replace('"','')
         directorios = destino.split('/')
         ruta_directorio = ''
@@ -74,7 +73,6 @@ def verificar_archivo_dentro_directorio(archivo, directorio):
 def eliminar_direcotrio_archivo(nombre,origen,tipo):
     tipo_accion = tipo.lower()
     if tipo_accion == "bucket":
-        origen = "Archivos"+origen
         origen = origen.replace('"','')
         if origen[0] == '/':
             origen = origen[ 1:len(origen)]
@@ -238,11 +236,11 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                     print('copiar')
 
                     if tipo1 == 'Carpeta':
-
                         origen = origen.replace('"','')
                         if origen[0] == '/':
                             origen = origen[ 1:len(origen)]
                         
+                        destino = limpiar_ruta(destino)
                         destino = destino.replace('"','')
                         if destino[0] == '/':
                             destino = destino[ 1:len(destino)]
@@ -313,6 +311,7 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                 if tipo1 != '':
                     print('copiar')
 
+                    origen = limpiar_ruta(origen)
                     origen = origen.replace('"','')
                     if origen[0] == '/':
                         origen = origen[ 1:len(origen)]
@@ -383,7 +382,8 @@ def copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to):
 
             if tipo2 == 'Carpeta':
 
-                
+                origen = limpiar_ruta(origen)
+                destino = limpiar_ruta(destino)
                 if tipo1 != '':
                     if os.path.exists(origen) and os.path.exists(destino):
                         #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
@@ -500,6 +500,7 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                         if origen[0] == '/':
                             origen = origen[ 1:len(origen)]
                         
+                        destino = limpiar_ruta(destino)
                         destino = destino.replace('"','')
                         if destino[0] == '/':
                             destino = destino[ 1:len(destino)]
@@ -607,6 +608,7 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
                 if tipo1 != '':
                     print('transferir')
 
+                    origen = limpiar_ruta(origen)
                     origen = origen.replace('"','')
                     if origen[0] == '/':
                         origen = origen[ 1:len(origen)]
@@ -656,6 +658,8 @@ def transfer_archivos_carpetas(origen,destino,tipo_from,tipo_to):
             if tipo2 == 'Carpeta':
                 if tipo1 != '':
                     nombre_archivo = ""
+                    origen = limpiar_ruta(origen)
+                    destino = limpiar_ruta(destino)
                     if os.path.exists(origen) and os.path.exists(destino):
                         #Se determina si la ruta de origen corresponde a la de un archivo o carpeta
                         if os.path.isfile(origen):
@@ -726,6 +730,7 @@ def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta,tipo):
             print("La ruta del archivo o carpeta para renombrar no se pudo verificar")
     else:
         #Se reestructura la ruta para el nuevo nombre
+        ruta = limpiar_ruta(ruta)
         partes = ruta.split("/")
         nueva_partes = [x for x in partes if x != '']
         rta = ""
@@ -744,6 +749,7 @@ def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta,tipo):
                     continuar = False
                     break
             if continuar:
+                rta = limpiar_ruta(rta)
                 os.rename(ruta,rta)
             else:
                 print("Imposible Renombrar, Existe un Archivo con el mismo nombre")
@@ -768,7 +774,7 @@ def modificar_archivo_bucket(ruta,body,tipo):
         else:
             print("La ruta del archivo o carpeta para MODIFICAR no se pudo verificar")
     else:
-        print(ruta)
+        ruta = limpiar_ruta(ruta)
         if os.path.exists(ruta):
             f = open(ruta,"w")
             f.write(body)
@@ -858,7 +864,7 @@ def open_archivo(tipo,ip,port,name_file):
 def limpiar_ruta(ruta_archivo):
     partes = ruta_archivo.split("/")
     nuevas_partes = [x for x in partes if x != '']
-    ruta_limpia = dir_origen+"/"
+    ruta_limpia = ""
     for x in nuevas_partes:
         if "\"" in x:
             x = x.replace('\"','')
