@@ -1025,9 +1025,13 @@ def generar_estructura_carpeta_bucket_jason(origen):
 
     return json_object
 
-def jsaon_backup_bucket(origen,nombre):
+def json_backup_bucket(origen,nombre):
 
     origen = origen.replace('"','')
+
+    if origen.startswith('/'):
+        origen = origen[1:]
+
     if origen.endswith('/'):
         print('Origen valido')
     else:
@@ -1040,7 +1044,50 @@ def jsaon_backup_bucket(origen,nombre):
     
     return json_backup
 
-jsaon_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
+def generar_json_carpeta(ruta):
+    jason_objeto = {
+        'Carpeta': os.path.basename(ruta),
+        'Archivos': []
+    }
+
+    for item in os.listdir(ruta):
+        item_ruta = os.path.join(ruta, item)
+        if os.path.isdir(item_ruta):
+            jason_objeto['Archivos'].append(generar_json_carpeta(item_ruta))
+        else:
+            with open(item_ruta, 'r') as archivo:
+                contenido = archivo.read()
+            jason_objeto['Archivos'].append({
+                'Archivo': item,
+                'Contenido': contenido
+            })
+
+    if len(jason_objeto['Archivos']) > 0:
+            print('tiene algo')
+    else:
+        print('no tiene nada')
+        jason_objeto.pop('Archivos')
+
+    return jason_objeto
+
+
+
+def json_backup_local(origen,nombre):
+
+    origen = origen.replace('"','')
+    if origen.endswith('/'):
+        print('Origen valido')
+    else:
+        origen = origen + '/'
+
+    json_backup = generar_json_carpeta(origen)
+
+    json_backup['Raiz'] = json_backup.pop('Carpeta')
+    json_backup['Raiz'] = nombre
+    
+    return json_backup
+
+#json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
 
 
 
