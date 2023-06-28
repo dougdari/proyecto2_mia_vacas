@@ -40,4 +40,4 @@ def app_view():
     return render_template('interfaz.html')
 
 if __name__ == '__main__':
-    app.run(host='54.234.176.196', port=22)
+    app.run(host='0.0.0.0', port=22)
