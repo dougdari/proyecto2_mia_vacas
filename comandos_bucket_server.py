@@ -729,11 +729,12 @@ def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta,tipo):
         else:
             print("La ruta del archivo o carpeta para renombrar no se pudo verificar")
     else:
-        #Se reestructura la ruta para el nuevo nombre
+        #Se reestructura la ruta para el nuevo nombred
         ruta = limpiar_ruta(ruta)
         partes = ruta.split("/")
         nueva_partes = [x for x in partes if x != '']
         rta = ""
+        dir_carpeta = ""
         for x in nueva_partes:
             if not re.search(".*\.txt",x):
                 rta=rta+x+"/"
@@ -744,15 +745,27 @@ def cambiar_nombre_archivo_carpeta_bucket(nombre, ruta,tipo):
         continuar = True
         if os.path.exists(ruta):
             #Se compara archivo existentes para verificar si no se repiten
-            for x in os.listdir(dir_carpeta):
-                if(x == nombre):
-                    continuar = False
-                    break
-            if continuar:
-                rta = limpiar_ruta(rta)
-                os.rename(ruta,rta)
+            if dir_carpeta != "":
+                for x in os.listdir(dir_carpeta):
+                    if(x == nombre):
+                        continuar = False
+                        break
+                if continuar:
+                    rta = limpiar_ruta(rta)
+                    os.rename(ruta,rta)
+                else:
+                    print("Imposible Renombrar, Existe un Archivo con el mismo nombre")
             else:
-                print("Imposible Renombrar, Existe un Archivo con el mismo nombre")
+                if ruta == rta:
+                    partes = rta.split('/')
+                    rta_nueva = [x for x in partes if x != '']
+                    rta_generada = ""
+                    i = 0
+                    while(i < len(rta_nueva)-1):
+                        rta_generada = rta_nueva[i]+"/"
+                        i+=1
+                    rta_generada += nombre.replace('"',"")+"/"
+                os.rename(ruta,rta_generada)
         else:
             print("Imposible de Renombrar, El Directorio o Archivo No Existe")
 
@@ -973,7 +986,7 @@ def copiar_archivos_directorio(origen, destino):
 #copiar_archivos_carpetas("/Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","bucket","bucket")
 
 
-#copiar_archivos_carpetas("/Archivos/carpeta_calificacion1/","/Archivos/carpeta prueba/","bucket","bucket")
+#copiar_archivos_carpetas("/Archivos/carpeta_tc/","./Archivos/sub_carpeta2/","bucket","server")
 
 
 
@@ -994,6 +1007,3 @@ def copiar_archivos_directorio(origen, destino):
 #copiar_archivos_carpetas("/Archivos/","./Archivos/","bucket","server")
 
 #print(verificar_archivo_con_ruta_bucket("/Archivos/sub_carpeta2/sub_carpeta1/"))
-
-
-cambiar_nombre_archivo_carpeta_bucket('regresar','/Archivos/Nuevo nombre/','bucket')
