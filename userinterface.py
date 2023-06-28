@@ -40,5 +40,5 @@ def app_view():
     return render_template('interfaz.html')
 
 if __name__ == '__main__':
-    app.run(host='54.237.193.152')
+    app.run(host='0.0.0.0')
 
