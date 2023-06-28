@@ -17,8 +17,6 @@ def index():
 @app.route('/', methods=['GET', 'POST'])
 def app_view():
 
-    
-
     if request.method == 'POST':
         #Lecutra comando individual
         #comando_env = request.form.get('comando_escrito')
@@ -41,5 +39,5 @@ def app_view():
 
     return render_template('interfaz.html')
 
-if __name__ == "__main__":
-    app.run(host='54.234.176.196', port=5000)
+if __name__ == '__main__':
+    app.run(host='54.234.176.196', port=22)
