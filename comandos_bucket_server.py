@@ -1044,6 +1044,8 @@ def json_backup_bucket(origen,nombre):
     json_backup['Raiz'] = json_backup.pop('Carpeta')
     json_backup['Raiz'] = nombre
 
+    print(json_backup)
+
     with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
         json.dump(json_backup, archivo, indent=4)
     
@@ -1089,6 +1091,8 @@ def json_backup_local(origen,nombre):
 
     json_backup['Raiz'] = json_backup.pop('Carpeta')
     json_backup['Raiz'] = nombre
+
+    print(json_backup)
     
     with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
         json.dump(json_backup, archivo, indent=4)
