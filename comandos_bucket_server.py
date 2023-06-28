@@ -982,6 +982,68 @@ def copiar_archivos_directorio(origen, destino):
     else:
         output_bt = "No se encontró nada en el directorio: "+origen+"para mover a: "+destino
 
+
+def generar_estructura_carpeta_bucket_jason(origen):
+ 
+    objetos = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen)['Contents']
+
+    json_object = {
+        'Carpeta': os.path.basename(origen[:-1]),
+        'Archivos': []
+    }
+
+    for objeto_ in objetos:
+        ruta_archivo = objeto_['Key']
+        if ruta_archivo != origen:
+            if ruta_archivo.startswith(origen):
+                sub_ruta = ruta_archivo[len(origen):]
+                if '/' not in sub_ruta:
+
+                    nombre_archivo = os.path.basename(ruta_archivo)
+                    contenido_archivo = objeto_s3.get_object(Bucket=nombre_bucket_s3, Key=ruta_archivo)['Body'].read().decode('utf-8')
+                    json_object['Archivos'].append({
+                        'Archivo': nombre_archivo,
+                        'Contenido': contenido_archivo
+                    })
+                else:
+
+                    carpetas = sub_ruta.split('/')
+                    if carpetas[0] not in [elem['Carpeta'] for elem in json_object['Archivos']]:
+
+                        sub_json_object = {
+                            'Carpeta': carpetas[0],
+                            'Archivos': generar_estructura_carpeta_bucket_jason(origen + carpetas[0] + '/')
+                        }
+
+                        if len(sub_json_object['Archivos']['Archivos']) > 0:
+                            print('tiene algo')
+                        else:
+                            print('no tiene nada')
+                            sub_json_object['Archivos'].pop('Archivos')
+                        
+                        json_object['Archivos'].append(sub_json_object)    
+
+    return json_object
+
+def jsaon_backup_bucket(origen,nombre):
+
+    origen = origen.replace('"','')
+    if origen.endswith('/'):
+        print('Origen valido')
+    else:
+        origen = origen + '/'
+
+    json_backup = generar_estructura_carpeta_bucket_jason(origen)
+
+    json_backup['Raiz'] = json_backup.pop('Carpeta')
+    json_backup['Raiz'] = nombre
+    
+    return json_backup
+
+jsaon_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
+
+
+
 #Copia desde la carpeta anterior, es decir que incluye la carpeta Archivos en la copia
 #copiar_archivos_carpetas("/Archivos/sub_carpeta1/","/Archivos/sub_carpeta2/","bucket","bucket")
 
