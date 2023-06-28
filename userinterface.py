@@ -5,6 +5,12 @@ import gestor
 
 app = Flask(__name__)
 
+@app.route('/')
+def get_host():
+
+    print('informacion del host')
+    return f'La aplicación Flask se está ejecutando en el host: {request.host}'
+
 @app.route('/s', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -41,3 +47,6 @@ def app_view():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
+
+print(get_host())
