@@ -159,7 +159,9 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0]).lower()=="port":
                 port_backup = comando[i][1]
             i+=1
-        comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup)
+        if tipo_to_backup == "" and tipo_from_backup == "":
+            comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup)
+
     elif(str(comando[0]).lower() == "recovery"):
         #PARAMETROS PARA EL MÉTODO CREAR
         tipo_to_recovery= ""

@@ -1,0 +1,95 @@
+{
+    "Archivos": [
+        {
+            "Carpeta": "calificacion bucket 1",
+            "Archivos": {
+                "Carpeta": "calificacion bucket 1",
+                "Archivos": [
+                    {
+                        "Carpeta": "Carpeta 2",
+                        "Archivos": {
+                            "Carpeta": "Carpeta 2",
+                            "Archivos": [
+                                {
+                                    "Archivo": "uedi.ingenieria.usac.edu.gt_campus_pluginfile.php_562810_mod_resource_content_5_prueba1.mia.txt",
+                                    "Contenido": "configure -type->cloud -encrypt_log->false -encrypt_read->false\r\ncreate -name->prueba1.txt  -path->/carpeta1/ -body->\"Este es el contenido del archivo1\" \r\ncreate -name->prueba2.txt  -path->/carpeta1/ -body->\"Este es el contenido del archivo2\"\r\ncreate -name->prueba1.txt  -path->/\"Carpeta Ejemplo\"/ -body->\"Un sistema de archivos es una estructura de directorios completa, que incluye un directorio ra\u00edz y cualquier subdirectorio y archivos por debajo suyo\"\r\ncreate -name->prueba2.txt  -path->/\"Carpeta Ejemplo\"/ -body->\"contenido archivo2\"\r\ncreate -name->prueba3.txt  -path->/\"Carpeta Ejemplo\"/ -body->\"Se trata de habilitar uno o varios discos duros en una red local, de forma que los datos que all\u00ed se almacenen permanezcan accesibles a todos los dispositivos que quieran utilizarlos\"\r\nrename -path->/carpeta1/prueba1.txt -name->nuevo_nombre1.txt\r\nrename -path->/carpeta1/prueba1.txt -name->nuevo_nombre2.txt\r\nrename -path->/carpeta1/prueba2.txt -name->nuevo_nombre2.txt\r\ncopy -from->/carpeta1/nuevo_nombre1.txt -to->/\"Carpeta Ejemplo\"/ \r\ntransfer -from->/carpeta1/nuevo_nombre2.txt -to->/\"Carpeta Ejemplo\"/ -mode->\"cloud\"\r\ndelete -path->/carpeta1/ -name->prueba2.txt\r\ndelete -path->/\"Carpeta Ejemplo\"/ -name->prueba3.txt\r\nmodify -path->/\"Carpeta Ejemplo\"/nuevo_nombre1.txt -body->\"Se trata de habilitar uno o varios discos duros en una red local, de forma que los datos que all\u00ed se almacenen permanezcan accesibles a todos los dispositivos que quieran utilizarlos\"\r\nbackup\r\nadd -path->/\"Carpeta Ejemplo\"/nuevo_nombre1.txt  -body->\"De esa forma, el usuario no solo tiene acceso al propio almacenamiento del dispositivo que est\u00e1 usando, sino que tambi\u00e9n dispone de un almacenamiento com\u00fan que comparte con otros dispositivos conectados a esa misma red.\"\r\ncreate -name->prueba4.txt  -path->/carpeta1/ejemplo/ -body->\"Este es el contenido del archivo4\"\r\ncreate -name->prueba5.txt  -path->/carpeta1/ejemplo/ -body->\"Este es el contenido del archivo5\"\r\ncreate -name->prueba6.txt  -path->/carpeta1/ejemplo/ -body->\"Este es el contenido del archivo6\"\r\ntransfer -from->/carpeta1/ -to->/\"Carpeta Ejemplo\"/ -mode->\"local\""
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "Carpeta": "Carpeta dentro de carpeta",
+                        "Archivos": {
+                            "Carpeta": "Carpeta dentro de carpeta"
+                        }
+                    },
+                    {
+                        "Archivo": "calificacion1.txt",
+                        "Contenido": "\"Contenido del archivo calificacion1 carpeta_calificacion1 en el bucket\""
+                    },
+                    {
+                        "Archivo": "calificacion2.txt",
+                        "Contenido": "\"Contenido del archivo calificacion2 carpeta_calificacion1 en el bucket\""
+                    },
+                    {
+                        "Archivo": "calificacion3.txt",
+                        "Contenido": "\"Contenido del archivo calificacion3 carpeta_calificacion1 en el bucket\""
+                    },
+                    {
+                        "Archivo": "calificacion4.txt",
+                        "Contenido": "\"Contenido del archivo calificacion4 carpeta_calificacion1 en el bucket\""
+                    }
+                ]
+            }
+        },
+        {
+            "Carpeta": "carpeta_calificacion1",
+            "Archivos": {
+                "Carpeta": "carpeta_calificacion1",
+                "Archivos": [
+                    {
+                        "Carpeta": "carpeta ejemplo",
+                        "Archivos": {
+                            "Carpeta": "carpeta ejemplo",
+                            "Archivos": [
+                                {
+                                    "Carpeta": "ejemplo3",
+                                    "Archivos": {
+                                        "Carpeta": "ejemplo3",
+                                        "Archivos": [
+                                            {
+                                                "Archivo": "calificacion1.txt",
+                                                "Contenido": "\"Contenido del archivo calificacion1 carpeta ejemplo\""
+                                            },
+                                            {
+                                                "Archivo": "calificacion2.txt",
+                                                "Contenido": "\"Contenido del archivo calificacion2 carpeta ejemplo\""
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "Carpeta": "ejemplo4",
+                                    "Archivos": {
+                                        "Carpeta": "ejemplo4",
+                                        "Archivos": [
+                                            {
+                                                "Archivo": "calificacion3.txt",
+                                                "Contenido": "\"Contenido del archivo calificacion3 carpeta ejemplo\""
+                                            },
+                                            {
+                                                "Archivo": "calificacion4.txt",
+                                                "Contenido": "\"Contenido del archivo calificacion4 carpeta ejemplo\""
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "Raiz": "copia1"
+}
