@@ -9,7 +9,7 @@ import stringify
 
 app = Flask(__name__)
 
-@app.route('/app', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         usuario = request.form.get('username')
@@ -18,7 +18,7 @@ def index():
             return redirect('/app')
     return render_template('auth/login.html')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/app', methods=['GET', 'POST'])
 def app_view():
 
     if request.method == 'POST':
@@ -55,17 +55,17 @@ def app_view():
 @app.route('/recovery/<type>/<filename>')
 def recover_json(type,filename):
     if type == "bucket":
-        data = comandos_bucket_server.json_backup_bucket('/Archivos/',filename)
+        data = comandos_bucket_server.json_backup_bucket('Archivos/',filename)
     elif type == "server":
-       data = comandos_bucket_server.json_backup_local('.Archivos/',filename)
+       data = comandos_bucket_server.json_backup_local('./Archivos/',filename)
     return data
 
 @app.route('/backup/<type>')
 def backup_json(type):
     if type == "bucket":
-        data = comandos_bucket_server.json_backup_bucket('/Archivos/','Archivos')
+        data = comandos_bucket_server.json_backup_bucket('Archivos/','Archivos')
     elif type == "server":
-        data = comandos_bucket_server.json_backup_local('.Archivos/','Archivos')
+        data = comandos_bucket_server.json_backup_local('./Archivos/','Archivos')
     return data
         
 
