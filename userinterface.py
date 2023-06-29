@@ -49,14 +49,6 @@ def app_view():
 
         
         #en esta parte se van consumir todos los endpoints
-
-        if len(str(comando_env)) > 0 :
-            print('comando ingresado por linea')
-            print(comando_env)
-
-            if len(analizadorEntrada.comandos) > 0:
-                print(analizadorEntrada.comandos[0])
-
             
     return render_template('interfaz.html')
 

@@ -160,7 +160,27 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0]).lower()=="port":
                 port_backup = comando[i][1]
             i+=1
-        if tipo_to_backup == "" and tipo_from_backup == "":
+
+        if len(ip_backup):
+            #consumir api rivaldo
+            print('hola')
+
+            url = 'http:/34.224.123.209/backup/' + tipo_from_backup
+            json_rivaldo = requests.get(url)
+
+            print(json_rivaldo)
+
+            if tipo_to_backup == 'server':
+
+                #implementar el metodo aca de json a server
+                print('copiar al server')
+            elif tipo_to_backup == 'bucket':
+
+                #implementar el metodo aca de json a bucket
+                print('copiar al bucket')
+
+        else:
+            #backup normal
             comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup)
 
     elif(str(comando[0]).lower() == "recovery"):
