@@ -9,7 +9,7 @@ import stringify
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/app', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         usuario = request.form.get('username')
@@ -18,7 +18,7 @@ def index():
             return redirect('/app')
     return render_template('auth/login.html')
 
-@app.route('/app', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def app_view():
 
     if request.method == 'POST':
