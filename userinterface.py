@@ -42,12 +42,12 @@ def app_view():
             gestor.ejecutar_comandos(analizadorEntrada.comandos)
     return render_template('interfaz.html')
 
-@app.route('/recover/<type>/<filename>')
+@app.route('/recovery/<type>/<filename>')
 def recover_json(type,filename):
     if type == "bucket":
         data = comandos_bucket_server.json_backup_bucket('/Archivos/',filename)
     elif type == "server":
-       data = comandos_bucket_server.json_backup_local('./Archivos/',filename)
+       data = comandos_bucket_server.json_backup_local('.Archivos/',filename)
     return data
     
 
