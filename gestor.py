@@ -182,7 +182,7 @@ def identificar_ejecutar(comando):
         else:
             #backup normal
             print('backup normal')
-            comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup)
+            comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup,'Archivos')
 
     elif(str(comando[0]).lower() == "recovery"):
         #PARAMETROS PARA EL MÉTODO CREAR
@@ -204,7 +204,30 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0]).lower()=="name":
                 name_recovery = comando[i][1]
             i+=1
-        comandos_bucket_server.crear_recovery(tipo_to_recovery,tipo_from_recovery,ip_recovery,port_recovery,name_recovery)
+
+        if len(ip_backup):
+            #consumir api rivaldo
+            print('hola')
+
+            url = 'http:/34.224.123.209/recovery/' + tipo_from_recovery + '/' + name_recovery
+            json_rivaldo = requests.get(url)
+
+            print(json_rivaldo)
+
+            if tipo_to_backup == 'server':
+
+                #implementar el metodo aca de json a server
+                print('copiar al server')
+            elif tipo_to_backup == 'bucket':
+
+                #implementar el metodo aca de json a bucket
+                print('copiar al bucket')
+
+        else:
+            #backup normal
+            print('recovery normal')
+            comandos_bucket_server.crear_recovery(tipo_to_recovery,tipo_from_recovery,ip_recovery,port_recovery,name_recovery)
+        
     elif(str(comando[0]).lower() == "delete_all"):
         #PARAMETROS PARA EL MÉTODO CREAR
         tipo_eliminar_todo = ""
