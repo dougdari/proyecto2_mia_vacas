@@ -1078,7 +1078,7 @@ def generar_json_carpeta(ruta):
     return jason_objeto
 
 def json_backup_local(origen,nombre):
-
+    
     origen = origen.replace('"','')
     if origen.endswith('/'):
         print('Origen valido')
@@ -1092,17 +1092,19 @@ def json_backup_local(origen,nombre):
 
     print(json_backup)
     
-    #with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
-    #    json.dump(json_backup, archivo, indent=4)
+    with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
+        json.dump(json_backup, archivo, indent=4)
 
     return json_backup
 
 def json_open_local(nombre_ruta):
-    nombre_ruta='./Archivos'+nombre_ruta.replace('"','')
-    if os.path.exists(nombre_ruta):
-        f = open(nombre_ruta,"r")
+    ruta = generar_ruta_local("./Archivos",nombre_ruta)
+    ruta=ruta.replace('"','')
+    print(ruta)
+    if os.path.exists(ruta):
+        f = open(ruta,"r")
         texto = f.read()
-        partes = nombre_ruta.split('/')
+        partes = ruta.split('/')
         for x in partes:
             if re.search(".*\.txt",x):
                 nombre_arch = x
@@ -1116,25 +1118,43 @@ def json_open_local(nombre_ruta):
         
         return json.dumps(json_op_local)
 
+def generar_ruta_local(ruta,nombre_archivo):
+    for x in os.listdir(ruta):
+        if not re.search(".*\.txt",x):
+            ruta = generar_ruta_local(ruta+"/"+x,nombre_archivo)
+        else:
+            ruta = ruta+"/"+nombre_archivo
+        return ruta
+
+def generar_ruta_bucket(nombre_archivo):
+    # Obtener la lista de objetos en el bucket
+    response = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3)
+    # Buscar el archivo en la lista de objetos
+    for obj in response['Contents']:
+        key = obj['Key']
+        if key.split('/')[-1] == nombre_archivo:
+            return f"{key}"
+    # Si el archivo no se encuentra
+    return None
+
 def json_open_bucket(nombre_ruta):
-    partes = nombre_ruta.split('/')
-    nombre_ruta = "Archivos"+nombre_ruta
-    print(nombre_ruta)
+    ruta = generar_ruta_bucket(nombre_ruta)
+    partes = ruta.split('/')
     global content_str
     for x in partes:
         if re.search(".*\.txt",x):
             nombre_arch = x
             break
-    if nombre_ruta.endswith('/'):
-        nombre_ruta = nombre_ruta[:-1]
+    if ruta.endswith('/'):
+        ruta = ruta[:-1]
 
-    if nombre_ruta.startswith('/'):
-        nombre_ruta = nombre_ruta[1:]
+    if ruta.startswith('/'):
+        ruta = ruta[1:]
 
     try:
         s3_object = s3_resource.Object(
             bucket_name='proyecto-2-mia', 
-            key=nombre_ruta
+            key=ruta
         )
         s3_response = s3_object.get()
         s3_object_body = s3_response.get('Body')
@@ -1190,9 +1210,10 @@ def leer_json_a_bucket(entradajson,root_inicial=''):
                 Bucket = nombre_bucket_s3,
                 Key = rta_final
             )
-            
+print(json_open_bucket("calificacion1.txt"))
+#print(generar_ruta_bucket("calificacion1.txt"))
+#json_open_local("calificacion1.txt")     
 #json_open_bucket("/calificacion bucket 1/calificacion1.txt")
-#json_open_local("/calificacion server 1/calificacion1.txt")
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
 
 
