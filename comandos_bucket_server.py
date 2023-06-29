@@ -820,44 +820,39 @@ def eliminar_todo_el_contenido_bucket(tipo):
 
 def crear_backup(tipo_to,tipo_from,ip,port,name_copy):
     if tipo_from == 'server':
-        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key='Archivos/'+name_copy+"/")
-        destino = '/Archivos/'+name_copy
+        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key='Archivos/'+name_copy.replace('"','')+"/")
+        destino = 'Archivos/'+name_copy.replace('"','')+"/"
         origen = './Archivos/'
     else:
-        if not os.path.exists('./Archivos/'+name_copy):
-            os.mkdir('./Archivos/'+name_copy)
-        destino = './Archivos/'+name_copy
-        origen = '/Archivos/'
+        if not os.path.exists('./Archivos/'+name_copy.replace('"','')):
+            os.mkdir('./Archivos/'+name_copy.replace('"',''))
+        destino = './Archivos/'+name_copy.replace('"','')
+        origen = 'Archivos/'
     
     if(ip == '' and port == ''):
         copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to)
 
 def crear_recovery(tipo_to,tipo_from,ip,port,name_copy):
     if tipo_from == 'server':
-        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key='Archivos/'+name_copy+"_recovered/")
-        destino = '/Archivos/'+name_copy+"_recovered/"
-        origen = './Archivos/'+name_copy
+        objeto_s3.put_object(Bucket=nombre_bucket_s3, Key='Archivos/'+name_copy.replace('"','')+"_recovered/")
+        destino = 'Archivos/'+name_copy.replace('"','')+"_recovered/"
+        origen = './Archivos/'+name_copy.replace('"','')
     else:
-        if not os.path.exists('./Archivos/'+name_copy):
-            os.mkdir('./Archivos/'+name_copy+"_recovered/")
-        destino = './Archivos/'+name_copy+"_recovered/"
-        origen = '/Archivos/'+name_copy
+        if not os.path.exists('./Archivos/'+name_copy.replace('"','')):
+            os.mkdir('./Archivos/'+name_copy.replace('"','')+"_recovered/")
+        destino = './Archivos/'+name_copy.replace('"','')+"_recovered/"
+        origen = 'Archivos/'+name_copy.replace('"','')
     
     if(ip == '' and port == ''):
         copiar_archivos_carpetas(origen,destino,tipo_from,tipo_to)
 
 def open_archivo(tipo,ip,port,name_file):
-    if name_file.endswith('/'):
-        name_file = name_file[:-1]
-
-    if name_file.startswith('/'):
-        name_file = name_file[1:]
-
     if tipo == "bucket":
+        rutab = generar_ruta_bucket(name_file)
         try:
             s3_object = s3_resource.Object(
                 bucket_name='proyecto-2-mia', 
-                key=name_file
+                key=rutab
             )
             s3_response = s3_object.get()
             s3_object_body = s3_response.get('Body')
@@ -872,8 +867,8 @@ def open_archivo(tipo,ip,port,name_file):
             print('NO EXISTE EL ARCHIVO QUE SE DESEA LEER')
             print(e)
     else:
-        nombre = "./"+name_file
-        f = open(nombre)
+        ruta = generar_ruta_local("./Archivos",name_file)
+        f = open(ruta)
         print(f.read())
 
 def limpiar_ruta(ruta_archivo):
@@ -1091,7 +1086,7 @@ def json_backup_local(origen,nombre):
 
     print(json_backup)
     
-    with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
+    with open('./Archivos/backup_ruta_local.json', 'w') as archivo  :
         json.dump(json_backup, archivo, indent=4)
 
     return json_backup
@@ -1206,7 +1201,7 @@ def leer_json_a_bucket(entradajson,root_inicial=''):
                 Key = rta_final
             )
 
-#print(generar_ruta_bucket("calificacion1.txt"))
+print(generar_ruta_local("./Archivos","calificacion1.txt"))
 #json_open_local("calificacion1.txt")     
 #json_open_bucket("/calificacion bucket 1/calificacion1.txt")
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')

@@ -7,6 +7,9 @@ def ejecutar_comandos(lista_comandos):
         if(lista_comandos[pos] != None):
             identificar_ejecutar(lista_comandos[pos])
         pos+=1
+def ejecutar_comando_i(comando):
+    print(comando)
+    identificar_ejecutar(comando)
 
 def identificar_ejecutar(comando):
     #La primera i indica el tipo de comando a ejecutar
@@ -163,7 +166,7 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0].lower()=="name"):
                 name_backup=comando[i][1]
             i+=1
-
+        name_backup.replace('"','')
         if len(ip_backup):
             #Se genera un json para enviar
             url = 'http:/34.224.123.209/backup/' + tipo_to_backup
@@ -180,7 +183,7 @@ def identificar_ejecutar(comando):
         else:
             #backup normal
             print('backup normal')
-            comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup,'Archivos')
+            comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup,name_backup)
 
     elif(str(comando[0]).lower() == "recovery"):
         #PARAMETROS PARA EL MÉTODO CREAR
@@ -202,8 +205,8 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0]).lower()=="name":
                 name_recovery = comando[i][1]
             i+=1
-
-        if len(ip_backup):
+        name_recovery.replace('"','')
+        if len(ip_recovery):
             #consumir api rivaldo
             print('hola')
 

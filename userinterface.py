@@ -32,7 +32,7 @@ def app_view():
 
         resultado = analizadorEntrada.parser.parse(str(comando_env), lexer=analizadorEntrada.lexer)
         for comando in analizadorEntrada.comandos:
-            print(comando)
+            gestor.ejecutar_comando_i(comando)
 
         file = request.files['myfile']
         if file.filename != '':
