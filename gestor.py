@@ -181,6 +181,7 @@ def identificar_ejecutar(comando):
 
         else:
             #backup normal
+            print('backup normal')
             comandos_bucket_server.crear_backup(tipo_to_backup,tipo_from_backup,ip_backup,port_backup)
 
     elif(str(comando[0]).lower() == "recovery"):
