@@ -1077,8 +1077,6 @@ def generar_json_carpeta(ruta):
 
     return jason_objeto
 
-
-
 def json_backup_local(origen,nombre):
 
     origen = origen.replace('"','')
@@ -1099,6 +1097,67 @@ def json_backup_local(origen,nombre):
 
     return json_backup
 
+def json_open_local(nombre_ruta):
+    nombre_ruta='./Archivos'+nombre_ruta.replace('"','')
+    if os.path.exists(nombre_ruta):
+        f = open(nombre_ruta,"r")
+        texto = f.read()
+        partes = nombre_ruta.split('/')
+        for x in partes:
+            if re.search(".*\.txt",x):
+                nombre_arch = x
+                break
+        json_op_local = {
+            "Data":{
+                "Contenido":texto,
+                "Nombre":nombre_arch
+            }
+        }
+        
+        return json.dumps(json_op_local)
+
+def json_open_bucket(nombre_ruta):
+    partes = nombre_ruta.split('/')
+    nombre_ruta = "Archivos"+nombre_ruta
+    print(nombre_ruta)
+    global content_str
+    for x in partes:
+        if re.search(".*\.txt",x):
+            nombre_arch = x
+            break
+    if nombre_ruta.endswith('/'):
+        nombre_ruta = nombre_ruta[:-1]
+
+    if nombre_ruta.startswith('/'):
+        nombre_ruta = nombre_ruta[1:]
+
+    try:
+        s3_object = s3_resource.Object(
+            bucket_name='proyecto-2-mia', 
+            key=nombre_ruta
+        )
+        s3_response = s3_object.get()
+        s3_object_body = s3_response.get('Body')
+        content_str = s3_object_body.read().decode()
+    except s3_resource.meta.client.exceptions.NoSuchBucket as e:
+        print('NO EXISTE EL BUCKET INDICADO')
+        print(e)
+
+    except s3_resource.meta.client.exceptions.NoSuchKey as e:
+        print('NO EXISTE EL ARCHIVO QUE SE DESEA LEER')
+        print(e)
+    
+    json_op_bucket = {
+            "Data":{
+                "Contenido":content_str,
+                "Nombre":nombre_arch
+            }
+        }
+        
+    return json.dumps(json_op_bucket)
+
+json_open_bucket("/calificacion bucket 1/calificacion1.txt")
+#json_open_local("/calificacion server 1/calificacion1.txt")
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
 
 
