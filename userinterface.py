@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request,redirect
+from flask import Flask, render_template,request,redirect,Response
 import LoginLogic
 import analizadorEntrada
 import gestor
@@ -60,13 +60,22 @@ def recover_json(type,filename):
        data = comandos_bucket_server.json_backup_local('./Archivos/',filename)
     return data
 
-@app.route('/backup/<type>')
+@app.route('/backup/<type>',methods=['POST'])
 def backup_json(type):
-    if type == "bucket":
-        data = comandos_bucket_server.json_backup_bucket('Archivos/','Archivos')
-    elif type == "server":
-        data = comandos_bucket_server.json_backup_local('./Archivos/','Archivos')
-    return data
+    if request.method == 'POST':
+        if type == "server":
+            info = request.get_json()
+            if info:
+                comandos_bucket_server.leer_json_a_local(info,'./Archivos')
+            else:
+                print("NO HAY NADA QUE ESCRIBIR")
+        else:
+            info = request.get_json()
+            if info:
+                comandos_bucket_server.leer_json_a_bucket(info,'Archivos')
+            else:
+                print("NO HAY NADA QUE ESCRIBIR")
+    
         
 
 @app.route('/open/<type>/<filename>')

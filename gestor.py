@@ -167,16 +167,13 @@ def identificar_ejecutar(comando):
 
             url = 'http:/34.224.123.209/backup/' + tipo_from_backup
             json_rivaldo = requests.get(url)
-
-            print(json_rivaldo)
-
             if tipo_to_backup == 'server':
 
-                comandos_bucket_server.leer_json_a_local(json_rivaldo,"./Archivos")
+                comandos_bucket_server.leer_json_a_local(json_rivaldo.text,"./Archivos")
                 print('copiar al server')
             elif tipo_to_backup == 'bucket':
 
-                comandos_bucket_server.leer_json_a_bucket(json_rivaldo,"Archivos")
+                comandos_bucket_server.leer_json_a_bucket(json_rivaldo.text,"Archivos")
                 print('copiar al bucket')
 
         else:
@@ -212,15 +209,14 @@ def identificar_ejecutar(comando):
             url = 'http:/34.224.123.209/recovery/' + tipo_from_recovery + '/' + name_recovery
             json_rivaldo = requests.get(url)
 
-            print(json_rivaldo)
 
             if tipo_to_backup == 'server':
 
-                comandos_bucket_server.leer_json_a_local(json_rivaldo,"./Archivos")
+                comandos_bucket_server.leer_json_a_local(json_rivaldo.text,"./Archivos")
                 print('copiar al server')
             elif tipo_to_backup == 'bucket':
 
-                comandos_bucket_server.leer_json_a_bucket(json_rivaldo,"Archivos")
+                comandos_bucket_server.leer_json_a_bucket(json_rivaldo.text,"Archivos")
                 print('copiar al bucket')
 
         else:
