@@ -1046,8 +1046,8 @@ def json_backup_bucket(origen,nombre):
 
     print(json_backup)
 
-    with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
-        json.dump(json_backup, archivo, indent=4)
+    #with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
+    #    json.dump(json_backup, archivo, indent=4)
     
     return json_backup
 
@@ -1092,8 +1092,8 @@ def json_backup_local(origen,nombre):
 
     print(json_backup)
     
-    with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
-        json.dump(json_backup, archivo, indent=4)
+    #with open('./Archivos/backup_ruta_local.json', 'w') as archivo:
+    #    json.dump(json_backup, archivo, indent=4)
 
     return json_backup
 
