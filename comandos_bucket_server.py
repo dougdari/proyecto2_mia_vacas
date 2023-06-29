@@ -1156,7 +1156,42 @@ def json_open_bucket(nombre_ruta):
         
     return json.dumps(json_op_bucket)
 
-json_open_bucket("/calificacion bucket 1/calificacion1.txt")
+def leer_json_a_local(entradajson,root_inicial=''):
+    for item in entradajson['Archvios']:
+        if 'Carpeta' in item:
+            nombre_crp = item['Carpeta']
+            crp_ruta = os.path.join(root_inicial,nombre_crp)
+            ruta_crp = os.path.join("./Archivos",crp_ruta)
+            os.makedirs(ruta_crp,exist_ok=True)
+            if 'Archivos' in item:
+                leer_json_a_local(item,root_inicial=crp_ruta)
+        else:
+            nombre_arch = item['Nombre']
+            contenido_arch = item['Contenido']
+            rta = os.path.join(root_inicial,nombre_arch)
+            rta_final = os.path.join('./Archivos',rta)
+            with open(rta_final,'w') as file:
+                file.write(contenido_arch)
+
+def leer_json_a_bucket(entradajson,root_inicial=''):
+    for item in entradajson['Archivos']:
+        if 'Carpeta' in item:
+            nombre_crp = item['Carpeta']
+            ruta_crp = os.path.join(root_inicial,nombre_crp)
+            if 'Archivos' in item:
+                leer_json_a_bucket(item,root_inicial=ruta_crp)
+        else:
+            nombre_arch = item['Nombre']
+            content_arch = item['Contenido']
+            rta = os.path.join(root_inicial,nombre_arch)
+            rta_final = os.path.join("Archivos",rta)
+            objeto_s3.put_object(
+                Body = content_arch,
+                Bucket = nombre_bucket_s3,
+                Key = rta_final
+            )
+            
+#json_open_bucket("/calificacion bucket 1/calificacion1.txt")
 #json_open_local("/calificacion server 1/calificacion1.txt")
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')
 
