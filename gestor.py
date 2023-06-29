@@ -161,7 +161,7 @@ def identificar_ejecutar(comando):
                 port_backup = comando[i][1]
             i+=1
 
-        if len(ip_backup):
+        if len(ip_backup) > 0:
             #consumir api rivaldo
             print('hola')
 
@@ -205,7 +205,7 @@ def identificar_ejecutar(comando):
                 name_recovery = comando[i][1]
             i+=1
 
-        if len(ip_backup):
+        if len(ip_recovery) > 0:
             #consumir api rivaldo
             print('hola')
 
@@ -214,11 +214,11 @@ def identificar_ejecutar(comando):
 
             print(json_rivaldo)
 
-            if tipo_to_backup == 'server':
+            if tipo_to_recovery == 'server':
 
                 #implementar el metodo aca de json a server
                 print('copiar al server')
-            elif tipo_to_backup == 'bucket':
+            elif tipo_to_recovery == 'bucket':
 
                 #implementar el metodo aca de json a bucket
                 print('copiar al bucket')
@@ -254,4 +254,19 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0]).lower()=="name":
                 name_open = comando[i][1]
             i+=1
-        comandos_bucket_server.open_archivo(tipo_open,ip_open,port_open,name_open)
+
+        if len(ip_open) > 0:
+
+            #consumir api rivaldo
+            print('hola')
+
+            url = 'http:/34.224.123.209/open/' + tipo_open + '/' + name_open
+            json_rivaldo = requests.get(url)
+
+            print(json_rivaldo)
+
+            #implementar open
+
+        else:
+            #open normal
+            comandos_bucket_server.open_archivo(tipo_open,ip_open,port_open,name_open)
