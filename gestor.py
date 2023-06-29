@@ -149,6 +149,7 @@ def identificar_ejecutar(comando):
         tipo_from_backup = ""
         ip_backup = ""
         port_backup = ""
+        name_backup = "backup_archivos"
         i = 1
         while(i < len(comando)):
             if str(comando[i][0]).lower()=="type_to":
@@ -159,23 +160,23 @@ def identificar_ejecutar(comando):
                 ip_backup = comando[i][1]
             elif str(comando[i][0]).lower()=="port":
                 port_backup = comando[i][1]
+            elif str(comando[i][0].lower()=="name"):
+                name_backup=comando[i][1]
             i+=1
 
         if len(ip_backup):
-            #consumir api rivaldo
-            print('hola')
+            #Se genera un json para enviar
+            url = 'http:/34.224.123.209/backup/' + tipo_to_backup
+            if tipo_from_backup == "server":
+                json_enviar_rivaldo = comandos_bucket_server.json_backup_local("./Archivos",name_backup)
+            else:
+                json_enviar_rivaldo = comandos_bucket_server.json_backup_bucket("Archivos",name_backup)
 
-            url = 'http:/34.224.123.209/backup/' + tipo_from_backup
-            json_rivaldo = requests.get(url)
-            if tipo_to_backup == 'server':
-
-                comandos_bucket_server.leer_json_a_local(json_rivaldo.text,"./Archivos")
-                print('copiar al server')
-            elif tipo_to_backup == 'bucket':
-
-                comandos_bucket_server.leer_json_a_bucket(json_rivaldo.text,"Archivos")
-                print('copiar al bucket')
-
+            encabezados = {
+                "Content-Type": "application/json"
+            }
+            #Se envia el json a rivaldo
+            requests.post(url,json_enviar_rivaldo,encabezados)
         else:
             #backup normal
             print('backup normal')

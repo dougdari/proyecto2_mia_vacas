@@ -984,7 +984,6 @@ def copiar_archivos_directorio(origen, destino):
     else:
         output_bt = "No se encontró nada en el directorio: "+origen+"para mover a: "+destino
 
-
 def generar_estructura_carpeta_bucket_jason(origen):
  
     objetos = objeto_s3.list_objects_v2(Bucket=nombre_bucket_s3, Prefix=origen)['Contents']
@@ -1206,7 +1205,7 @@ def leer_json_a_bucket(entradajson,root_inicial=''):
                 Bucket = nombre_bucket_s3,
                 Key = rta_final
             )
-print(json_open_bucket("calificacion1.txt"))
+
 #print(generar_ruta_bucket("calificacion1.txt"))
 #json_open_local("calificacion1.txt")     
 #json_open_bucket("/calificacion bucket 1/calificacion1.txt")
