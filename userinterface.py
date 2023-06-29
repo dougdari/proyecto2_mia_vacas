@@ -67,7 +67,7 @@ def recover_json(type,filename):
     return data
 
 @app.route('/backup/<type>/<filename>')
-def recover_json(type,filename):
+def backup_json(type,filename):
     if type == "bucket":
         #data = comandos_bucket_server.json_backup_bucket('/Archivos/',filename)
         data = ''
@@ -80,7 +80,7 @@ def recover_json(type,filename):
         
 
 @app.route('/open/<type>/<filename>')
-def recover_json(type,filename):
+def open_json(type,filename):
     if type == "bucket":
         #data = comandos_bucket_server.json_backup_bucket('/Archivos/',filename)
         print('open','bucket')
