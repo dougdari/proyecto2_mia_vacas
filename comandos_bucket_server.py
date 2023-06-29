@@ -1110,10 +1110,8 @@ def json_open_local(nombre_ruta):
                 nombre_arch = x
                 break
         json_op_local = {
-            "Data":{
-                "Contenido":texto,
-                "Nombre":nombre_arch
-            }
+            "Contenido":texto,
+            "Nombre":nombre_arch
         }
         
         return json.dumps(json_op_local)
@@ -1168,10 +1166,8 @@ def json_open_bucket(nombre_ruta):
         print(e)
     
     json_op_bucket = {
-            "Data":{
-                "Contenido":content_str,
-                "Nombre":nombre_arch
-            }
+            "Contenido":content_str,
+            "Nombre":nombre_arch
         }
         
     return json.dumps(json_op_bucket)
