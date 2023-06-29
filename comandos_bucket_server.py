@@ -1004,7 +1004,7 @@ def generar_estructura_carpeta_bucket_jason(origen):
                     nombre_archivo = os.path.basename(ruta_archivo)
                     contenido_archivo = objeto_s3.get_object(Bucket=nombre_bucket_s3, Key=ruta_archivo)['Body'].read().decode('utf-8')
                     json_object['Archivos'].append({
-                        'Archivo': nombre_archivo,
+                        'Nombre': nombre_archivo,
                         'Contenido': contenido_archivo
                     })
                 else:
@@ -1065,7 +1065,7 @@ def generar_json_carpeta(ruta):
             with open(item_ruta, 'r') as archivo:
                 contenido = archivo.read()
             jason_objeto['Archivos'].append({
-                'Archivo': item,
+                'Nombre': item,
                 'Contenido': contenido
             })
 

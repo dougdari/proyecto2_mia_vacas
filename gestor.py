@@ -1,4 +1,5 @@
 import comandos_bucket_server
+import requests
 
 def ejecutar_comandos(lista_comandos):
     pos = 0
