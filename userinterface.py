@@ -72,7 +72,7 @@ def backup_json(type):
         if type == "server":
             info = request.get_json()
             if info:
-                comandos_bucket_server.leer_json_a_local(info,'./Archivos')
+                comandos_bucket_server.writeJSON(info)
             else:
                 print("NO HAY NADA QUE ESCRIBIR")
         else:

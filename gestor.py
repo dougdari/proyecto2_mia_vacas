@@ -193,6 +193,7 @@ def identificar_ejecutar(comando):
         port_recovery = ""
         name_recovery = ""
         i = 1
+        json_rivaldo_rec=""
         while(i < len(comando)):
             if str(comando[i][0]).lower()=="type_to":
                 tipo_to_recovery = comando[i][1]
@@ -209,18 +210,26 @@ def identificar_ejecutar(comando):
         if len(ip_recovery):
             #consumir api rivaldo
             print('hola')
+            nombre = name_recovery.replace('"','')
+            endpoint = f"http://34.224.123.209/recovery/{tipo_to_recovery}/{nombre}"
+            headers = {
+                "Content-Type": "application/json"
+            }
+            response =  requests.get(
+                endpoint, 
+                headers=headers
+            )
+            if response.status_code == 200:
+                json_rivaldo_rec = response.json()
 
-            url = 'http:/34.224.123.209/recovery/' + tipo_from_recovery + '/' + name_recovery
-            json_rivaldo = requests.get(url)
+            print(json_rivaldo_rec)
 
 
-            if tipo_to_backup == 'server':
-
-                comandos_bucket_server.leer_json_a_local(json_rivaldo.text,"./Archivos")
+            if tipo_to_recovery == 'server':
+                comandos_bucket_server.writeJSON(json_rivaldo_rec)
                 print('copiar al server')
-            elif tipo_to_backup == 'bucket':
-
-                comandos_bucket_server.leer_json_a_bucket(json_rivaldo.text,"Archivos")
+            elif tipo_to_recovery == 'bucket':
+                comandos_bucket_server.leer_json_a_bucket(json_rivaldo_rec,"Archivos")
                 print('copiar al bucket')
 
         else:

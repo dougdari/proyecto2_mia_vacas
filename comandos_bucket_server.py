@@ -1175,22 +1175,34 @@ def json_open_bucket(nombre_ruta):
         
     return json.dumps(json_op_bucket)
 
-def leer_json_a_local(entradajson,root_inicial=''):
-    for item in entradajson['Archivos']:
-        if 'Carpeta' in item:
-            nombre_crp = item['Carpeta']
-            crp_ruta = os.path.join(root_inicial,nombre_crp)
-            ruta_crp = os.path.join("./Archivos",crp_ruta)
-            os.makedirs(ruta_crp,exist_ok=True)
-            if 'Archivos' in item:
-                leer_json_a_local(item,root_inicial=crp_ruta)
-        else:
-            nombre_arch = item['Nombre']
-            contenido_arch = item['Contenido']
-            rta = os.path.join(root_inicial,nombre_arch)
-            rta_final = os.path.join('./Archivos',rta)
-            with open(rta_final,'w') as file:
-                file.write(contenido_arch)
+def writeJSON(input):
+    print(input)
+    raiz = input["Raiz"]
+    print("------- ", raiz)
+    write_files(input["Archivos"], parent_folder=raiz)
+
+def write_files(json_data, parent_folder=""):
+    if isinstance(json_data, dict):
+        json_data = [json_data]
+    
+    for item in json_data:
+        if "Carpeta" in item and "Archivos" in item:
+            carpeta_nombre = item["Carpeta"]
+            carpeta_ruta = os.path.join(parent_folder, carpeta_nombre)
+            ruta_carpeta = os.path.join("./Archivos", carpeta_ruta)
+            print("RUTA ", ruta_carpeta)
+            if not os.path.exists(ruta_carpeta):
+                os.makedirs(ruta_carpeta, exist_ok=True)
+            write_files(item["Archivos"], parent_folder=carpeta_ruta)
+        elif "Nombre" in item and "Contenido" in item:
+            archivo_nombre = item["Nombre"]
+            archivo_contenido = item["Contenido"]
+            ruta = os.path.join(parent_folder, archivo_nombre)
+            ruta_completa = os.path.join("./Archivos", ruta)
+            if not os.path.exists(os.path.dirname(ruta_completa)):
+                os.makedirs(os.path.dirname(ruta_completa), exist_ok=True)
+            with open(ruta_completa, 'w') as file:
+                file.write(archivo_contenido)
 
 def leer_json_a_bucket(entradajson,root_inicial=''):
     for item in entradajson['Archivos']:
