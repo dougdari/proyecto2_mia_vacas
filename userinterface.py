@@ -84,7 +84,7 @@ def backup_json(type):
         else:
             info = request.get_json()
             if info:
-                comandos_bucket_server.leer_json_a_bucket(info,'Archivos')
+                comandos_bucket_server.backupCloud(info,2)
                 data = {
                     "message":"Copia realizada"
                 }

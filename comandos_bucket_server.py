@@ -1204,24 +1204,45 @@ def write_files(json_data, parent_folder=""):
             with open(ruta_completa, 'w') as file:
                 file.write(archivo_contenido)
 
-def leer_json_a_bucket(entradajson,root_inicial=''):
-    for item in entradajson['Archivos']:
-        if 'Carpeta' in item:
-            nombre_crp = item['Carpeta']
-            ruta_crp = os.path.join(root_inicial,nombre_crp)
-            if 'Archivos' in item:
-                leer_json_a_bucket(item,root_inicial=ruta_crp)
-        else:
-            nombre_arch = item['Nombre']
-            content_arch = item['Contenido']
-            rta = os.path.join(root_inicial,nombre_arch)
-            rta_final = os.path.join("Archivos",rta)
-            objeto_s3.put_object(
-                Body = content_arch,
-                Bucket = nombre_bucket_s3,
-                Key = rta_final
-            )
+def backupCloud(nameCarpeta, option):
+    ruta_local = './Archivos' 
+    if(option == 1):
+        for root, dirs, files in os.walk(ruta_local):
+            for file_name in files:
+                local_path = os.path.join(root, file_name)
+                s3_path = os.path.relpath(local_path, "./Archivos")
+                s3_path = "Archivos/" + nameCarpeta +"/"+ s3_path
+                print("local ---- ",local_path)
+                print("cloud ---- ",s3_path )
+                objeto_s3.upload_file(local_path, nombre_bucket_s3, s3_path)
+    elif(option == 2):
+        # Descomponer el json 
+        print("Subir a la nube del json")
+        #data = json.loads(nameCarpeta)
+        raiz = nameCarpeta["Raiz"]
+        backupCloudExtern(nameCarpeta["Archivos"], parent_folder=raiz)
+    
+def backupCloudExtern(json_data, parent_folder=''):
+    for item in json_data:
+        if "Nombre" in item and "Contenido" in item:
+            archivo_nombre = item["Nombre"]
+            archivo_contenido = item["Contenido"]
+            ruta = os.path.join(parent_folder, archivo_nombre)
+            ruta_completa = os.path.join("Archivos", ruta)
+            file_content = archivo_contenido.encode('utf-8')
+            uploadFile(ruta_completa, file_content)
+        elif "Carpeta" in item and "Archivos" in item:
+            carpeta_nombre = item["Carpeta"]
+            carpeta_ruta = os.path.join(parent_folder, carpeta_nombre)
+            backupCloudExtern(item["Archivos"], parent_folder=carpeta_ruta)
+            
 
+def uploadFile(path, contenido):
+    objeto_s3.put_object(
+        Body = contenido,
+        Bucket = nombre_bucket_s3,
+        Key = path
+    )
 #json_open_local("calificacion1.txt")     
 #json_open_bucket("/calificacion bucket 1/calificacion1.txt")
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')

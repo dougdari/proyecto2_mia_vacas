@@ -229,7 +229,7 @@ def identificar_ejecutar(comando):
                 comandos_bucket_server.writeJSON(json_rivaldo_rec)
                 print('copiar al server')
             elif tipo_to_recovery == 'bucket':
-                comandos_bucket_server.leer_json_a_bucket(json_rivaldo_rec,"Archivos")
+                comandos_bucket_server.backupCloud(json_rivaldo_rec,2)
                 print('copiar al bucket')
 
         else:
