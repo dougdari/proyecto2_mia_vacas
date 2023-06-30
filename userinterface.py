@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request,redirect,Response
+from flask import Flask, render_template,request,redirect,Response,jsonify
 import LoginLogic
 import analizadorEntrada
 import gestor
@@ -73,14 +73,28 @@ def backup_json(type):
             info = request.get_json()
             if info:
                 comandos_bucket_server.writeJSON(info)
+                data = {
+                    "message":"Copia realizada"
+                }
             else:
-                print("NO HAY NADA QUE ESCRIBIR")
+                data = {
+                    "message":"Copia Error"
+                }
+            return jsonify(data)
         else:
             info = request.get_json()
             if info:
                 comandos_bucket_server.leer_json_a_bucket(info,'Archivos')
+                data = {
+                    "message":"Copia realizada"
+                }
             else:
+                data = {
+                    "message":"Copia Error"
+                }
+
                 print("NO HAY NADA QUE ESCRIBIR")
+            return jsonify(data)
     
         
 
