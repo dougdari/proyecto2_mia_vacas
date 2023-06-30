@@ -1185,7 +1185,7 @@ def json_open_bucket(nombre_ruta):
     return json.dumps(json_op_bucket)
 
 def leer_json_a_local(entradajson,root_inicial=''):
-    for item in entradajson['Archvios']:
+    for item in entradajson['Archivos']:
         if 'Carpeta' in item:
             nombre_crp = item['Carpeta']
             crp_ruta = os.path.join(root_inicial,nombre_crp)
