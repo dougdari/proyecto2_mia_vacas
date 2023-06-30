@@ -1038,24 +1038,18 @@ def json_backup_bucket(origen,nombre):
     #json_backup['Raiz'] = json_backup.pop('Carpeta')
     #json_backup['Raiz'] = nombre
 
-
-    print(json_backup)
-
     json_nuevo = {
         'Raiz': os.path.basename(origen),
         'Archivos': []
     }
-
-    try:
-        json_nuevo['Raiz'] = json_backup['Carpeta']
-        json_nuevo['Archivos'] = json_backup['Archivos']
-    except NameError:
-        print('problemas')
-
-    #with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
-    #    json.dump(json_backup, archivo, indent=4)
     
-    return json_nuevo
+    json_nuevo['Raiz'] = json_backup['Carpeta']
+    json_nuevo['Archivos'] = json_backup['Archivos']
+
+    print(json_nuevo)
+    
+    
+    return json.dumps(json_nuevo)
 
 def generar_json_carpeta(ruta):
     jason_objeto = {
@@ -1100,14 +1094,11 @@ def json_backup_local(origen,nombre):
         'Raiz': os.path.basename(origen),
         'Archivos': []
     }
+  
+    json_nuevo['Raiz'] = json_backup['Carpeta']
+    json_nuevo['Archivos'] = json_backup['Archivos']
 
-    try:
-        json_nuevo['Raiz'] = json_backup['Carpeta']
-        json_nuevo['Archivos'] = json_backup['Archivos']
-    except NameError:
-        print('problemas')
-
-    return json_nuevo
+    return json.dumps(json_nuevo)
 
 def json_open_local(nombre_ruta):
     ruta = generar_ruta_local("./Archivos",nombre_ruta)
