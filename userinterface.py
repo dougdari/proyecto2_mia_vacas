@@ -24,7 +24,7 @@ def app_view():
     if request.method == 'POST':
         #Lecutra comando individual
 
-        render_template('interfaz.html', texto_entrada_comandos='')
+        #render_template('interfaz.html', texto_entrada_comandos='')
         comando_env = ''
         comando_env = request.form.get('comando_escrito')
         analizadorEntrada.comandos = []
@@ -46,7 +46,7 @@ def app_view():
                 contenido_archivo = f.read()
 
                 
-            render_template('interfaz.html', texto_entrada_comandos=comando_env)
+            #render_template('interfaz.html', texto_entrada_comandos=comando_env)
             #render_template('interfaz.html', texto_entrada_comandos=comando_env)
 
             analizadorEntrada.comandos = []
