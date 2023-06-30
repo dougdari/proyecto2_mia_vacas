@@ -1046,14 +1046,9 @@ def json_backup_bucket(origen,nombre):
         'Archivos': []
     }
 
-    try:
-        json_nuevo['Raiz'] = json_backup['Carpeta']
-        json_nuevo['Archivos'] = json_backup['Archivos']
-    except NameError:
-        print('problemas')
-
-    #with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
-    #    json.dump(json_backup, archivo, indent=4)
+    
+    json_nuevo['Raiz'] = json_backup['Carpeta']
+    json_nuevo['Archivos'] = json_backup['Archivos']
     
     return json_nuevo
 
@@ -1100,12 +1095,9 @@ def json_backup_local(origen,nombre):
         'Raiz': os.path.basename(origen),
         'Archivos': []
     }
-
-    try:
-        json_nuevo['Raiz'] = json_backup['Carpeta']
-        json_nuevo['Archivos'] = json_backup['Archivos']
-    except NameError:
-        print('problemas')
+  
+    json_nuevo['Raiz'] = json_backup['Carpeta']
+    json_nuevo['Archivos'] = json_backup['Archivos']
 
     return json_nuevo
 
