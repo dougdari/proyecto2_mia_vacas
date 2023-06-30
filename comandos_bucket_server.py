@@ -1042,7 +1042,6 @@ def json_backup_bucket(origen,nombre):
         'Raiz': os.path.basename(origen),
         'Archivos': []
     }
-
     
     json_nuevo['Raiz'] = json_backup['Carpeta']
     json_nuevo['Archivos'] = json_backup['Archivos']
@@ -1050,7 +1049,7 @@ def json_backup_bucket(origen,nombre):
     print(json_nuevo)
     
     
-    return json_nuevo
+    return json.dumps(json_nuevo)
 
 def generar_json_carpeta(ruta):
     jason_objeto = {
@@ -1099,7 +1098,7 @@ def json_backup_local(origen,nombre):
     json_nuevo['Raiz'] = json_backup['Carpeta']
     json_nuevo['Archivos'] = json_backup['Archivos']
 
-    return json_nuevo
+    return json.dumps(json_nuevo)
 
 def json_open_local(nombre_ruta):
     ruta = generar_ruta_local("./Archivos",nombre_ruta)
