@@ -24,6 +24,7 @@ def app_view():
     if request.method == 'POST':
         #Lecutra comando individual
 
+        #render_template('interfaz.html', texto_entrada_comandos='')
         comando_env = ''
         comando_env = request.form.get('comando_escrito')
         analizadorEntrada.comandos = []
@@ -43,6 +44,11 @@ def app_view():
             with open(file.filename, 'r') as f:
 
                 contenido_archivo = f.read()
+
+                
+            #render_template('interfaz.html', texto_entrada_comandos=comando_env)
+            #render_template('interfaz.html', texto_entrada_comandos=comando_env)
+
             analizadorEntrada.comandos = []
             resultado = analizadorEntrada.parser.parse(str(contenido_archivo), lexer=analizadorEntrada.lexer)
             gestor.ejecutar_comandos(analizadorEntrada.comandos)
