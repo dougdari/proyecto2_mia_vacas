@@ -169,17 +169,25 @@ def identificar_ejecutar(comando):
         name_backup.replace('"','')
         if len(ip_backup):
             #Se genera un json para enviar
-            url = 'http:/34.224.123.209/backup/' + tipo_to_backup
-            if tipo_from_backup == "server":
+            url = 'http://34.224.123.209/backup/' + tipo_to_backup
+            if tipo_to_backup == "server":
                 json_enviar_rivaldo = comandos_bucket_server.json_backup_local("./Archivos",name_backup)
             else:
                 json_enviar_rivaldo = comandos_bucket_server.json_backup_bucket("Archivos",name_backup)
 
-            encabezados = {
+            headers = {
                 "Content-Type": "application/json"
             }
             #Se envia el json a rivaldo
-            requests.post(url,json_enviar_rivaldo,encabezados)
+            response = requests.post(url,
+                                     data=json_enviar_rivaldo,
+                                     headers=headers)
+            if response.status_code == 200:
+                response_data = response.json()
+                print(response_data)
+            else:
+                print("Error ",response.status_code)
+            
         else:
             #backup normal
             print('backup normal')
