@@ -1038,6 +1038,7 @@ def json_backup_bucket(origen,nombre):
     json_backup['Raiz'] = json_backup.pop('Carpeta')
     json_backup['Raiz'] = nombre
 
+
     print(json_backup)
 
     #with open('./Archivos/backup_ruta_bucket.json', 'w') as archivo:
@@ -1201,7 +1202,6 @@ def leer_json_a_bucket(entradajson,root_inicial=''):
                 Key = rta_final
             )
 
-print(generar_ruta_local("./Archivos","calificacion1.txt"))
 #json_open_local("calificacion1.txt")     
 #json_open_bucket("/calificacion bucket 1/calificacion1.txt")
 #json_backup_bucket('Archivos/calificacion bucket 1/','miBackup')

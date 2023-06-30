@@ -245,7 +245,7 @@ def identificar_ejecutar(comando):
         name_open = ""
         i = 1
         while(i < len(comando)):
-            if str(comando[i][0]).lower()=="type_to":
+            if str(comando[i][0]).lower()=="type":
                 tipo_open = comando[i][1]
             elif str(comando[i][0]).lower()=="ip":
                 ip_open = comando[i][1]
@@ -254,4 +254,17 @@ def identificar_ejecutar(comando):
             elif str(comando[i][0]).lower()=="name":
                 name_open = comando[i][1]
             i+=1
-        comandos_bucket_server.open_archivo(tipo_open,ip_open,port_open,name_open)
+        if len(ip_open):
+            endpoint = f"http://34.224.123.209/open/{tipo_open}/{name_open}"
+            headers = {
+                "Content-Type": "application/json"
+            }
+            response =  requests.get(
+                endpoint, 
+                headers=headers
+            )
+            if response.status_code == 200:
+                print(response.json())
+            
+        else:
+            comandos_bucket_server.open_archivo(tipo_open,ip_open,port_open,name_open)
