@@ -45,8 +45,9 @@ def app_view():
 
                 contenido_archivo = f.read()
 
-                render_template('interfaz.html', texto_entrada_comandos=contenido_archivo)
                 
+            render_template('interfaz.html', texto_entrada_comandos=comando_env)
+            #render_template('interfaz.html', texto_entrada_comandos=comando_env)
 
             analizadorEntrada.comandos = []
             resultado = analizadorEntrada.parser.parse(str(contenido_archivo), lexer=analizadorEntrada.lexer)
