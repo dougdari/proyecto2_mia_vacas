@@ -1038,9 +1038,6 @@ def json_backup_bucket(origen,nombre):
     #json_backup['Raiz'] = json_backup.pop('Carpeta')
     #json_backup['Raiz'] = nombre
 
-
-    print(json_backup)
-
     json_nuevo = {
         'Raiz': os.path.basename(origen),
         'Archivos': []
@@ -1049,6 +1046,9 @@ def json_backup_bucket(origen,nombre):
     
     json_nuevo['Raiz'] = json_backup['Carpeta']
     json_nuevo['Archivos'] = json_backup['Archivos']
+
+    print(json_nuevo)
+    
     
     return json_nuevo
 
